@@ -52,6 +52,7 @@ CREATE TABLE LotesStock(
     cantidad_restante INT NOT NULL,
     fecha_recepcion DATETIME DEFAULT GETDATE(),
     proveedor_id INT NULL,
+    activo BIT DEFAULT 1,
     CONSTRAINT "FK_LoteStock_Producto" FOREIGN KEY(producto_id) REFERENCES CatalogoProductos(id),
     CONSTRAINT "FK_LoteStock_Proveedor" FOREIGN KEY(proveedor_id) REFERENCES Proveedores(id)
 );
@@ -94,8 +95,8 @@ CREATE TABLE Ventas(
     fecha_venta DATETIME DEFAULT GETDATE(),
     monto_total DECIMAL(12,2) DEFAULT 0,
     metodo_pago VARCHAR(20) DEFAULT 'EFECTIVO',
-    estatus_venta VARCHAR(20) DEFAULT 'COMPLETADA', -- PENDIENTE, COMPLETADA, CANCELADA
-    estatus_entrega VARCHAR(30) DEFAULT 'ENTREGADA', -- PENDIENTE, PARCIAL, COMPLETA, CANCELADA
+    estatus_venta VARCHAR(20) NOT NULL CHECK (estatus_venta IN ('PENDIENTE','COMPLETADA','CANCELADA')),
+    estatus_entrega VARCHAR(30)  NOT NULL CHECK (estatus_entrega IN ('PENDIENTE','PARCIAL','COMPLETA','CANCELADA')),
     fecha_entrega DATETIME DEFAULT GETDATE(),
     notas VARCHAR(200),
     entregado_por VARCHAR(100),
@@ -110,7 +111,7 @@ CREATE TABLE DetalleVentas(
     cantidad_entregada INT DEFAULT 0,
     precio_unitario DECIMAL(10,2) NOT NULL,
     total_linea DECIMAL(12,2) NOT NULL,
-    estatus_entrega VARCHAR(30) DEFAULT 'PENDIENTE', -- PENDIENTE, PARCIAL, COMPLETA, CANCELADA
+    estatus_entrega VARCHAR(30) NOT NULL CHECK (estatus_entrega IN ('PENDIENTE','PARCIAL','COMPLETA','CANCELADA')), 
     fecha_entrega DATETIME NULL,
     notas_entrega VARCHAR(200),
     CONSTRAINT "FK_DetalleVenta_Venta" FOREIGN KEY(venta_id) REFERENCES Ventas(id),
@@ -134,9 +135,9 @@ CREATE TABLE MovimientosInventario(
     id INT IDENTITY PRIMARY KEY,
     producto_id INT NOT NULL,
     lote_id INT NULL,
-    tipo_movimiento VARCHAR(20) NOT NULL, -- ENTRADA, SALIDA, AJUSTE
+    tipo_movimiento VARCHAR(20) NOT NULL CHECK (tipo_movimiento IN ('ENTRADA','SALIDA','AJUSTE')), -- ENTRADA, SALIDA, AJUSTE
     cantidad INT NOT NULL,
-    tipo_referencia VARCHAR(20), -- VENTA, COMPRA, AJUSTE
+    tipo_referencia VARCHAR(20) NOT NULL CHECK (tipo_referencia IN ('VENTA','COMPRA','AJUSTE')), -- VENTA, COMPRA, AJUSTE
     referencia_id INT NULL,
     notas VARCHAR(200),
     fecha_movimiento DATETIME DEFAULT GETDATE(),

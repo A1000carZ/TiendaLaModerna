@@ -22,7 +22,7 @@ BEGIN
     SELECT l.id, l.producto_id, p.nombre AS producto_nombre,
            l.numero_lote, l.fecha_vencimiento, l.precio_costo,
            l.cantidad_recibida, l.cantidad_restante, l.fecha_recepcion,
-           l.proveedor_id, pr.nombre AS proveedor_nombre
+           l.proveedor_id, pr.nombre AS proveedor_nombre, l.activo
     FROM LotesStock l
     INNER JOIN CatalogoProductos p ON l.producto_id = p.id
     LEFT JOIN Proveedores pr ON l.proveedor_id = pr.id

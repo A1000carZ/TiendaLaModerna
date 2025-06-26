@@ -52,10 +52,10 @@ BEGIN
         de.entregado_por, 
         de.notas,
         
-        p.nombre AS producto_nombre,
+        p.nombre AS producto_nombre
     FROM DetalleEntregas de
     INNER JOIN DetalleVentas dv ON de.detalle_venta_id = dv.id
-    INNER JOIN Productos p ON dv.producto_id = p.id
+    INNER JOIN CatalogoProductos p ON dv.producto_id = p.id
     LEFT JOIN LotesStock l ON de.lote_id = l.id
     ORDER BY de.fecha_entrega DESC;
 END;
@@ -84,7 +84,7 @@ BEGIN
         p.nombre AS producto_nombre
     FROM DetalleEntregas de
     INNER JOIN DetalleVentas dv ON de.detalle_venta_id = dv.id
-    INNER JOIN Productos p ON dv.producto_id = p.id
+    INNER JOIN CatalogoProductos p ON dv.producto_id = p.id
     LEFT JOIN LotesStock l ON de.lote_id = l.id
     WHERE de.id = @id;
 END;
