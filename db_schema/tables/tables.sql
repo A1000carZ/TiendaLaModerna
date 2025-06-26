@@ -1,5 +1,3 @@
--- Tablas de Base de Datos para Tienda La Moderna
-
 CREATE TABLE CatalogoCategorias(
     id SMALLINT IDENTITY PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -96,8 +94,11 @@ CREATE TABLE Ventas(
     fecha_venta DATETIME DEFAULT GETDATE(),
     monto_total DECIMAL(12,2) DEFAULT 0,
     metodo_pago VARCHAR(20) DEFAULT 'EFECTIVO',
-    estatus VARCHAR(20) DEFAULT 'COMPLETADA',
+    estatus_venta VARCHAR(20) DEFAULT 'COMPLETADA', -- PENDIENTE, COMPLETADA, CANCELADA
+    estatus_entrega VARCHAR(30) DEFAULT 'ENTREGADA', -- PENDIENTE, PARCIAL, COMPLETA, CANCELADA
+    fecha_entrega DATETIME DEFAULT GETDATE(),
     notas VARCHAR(200),
+    entregado_por VARCHAR(100),
     CONSTRAINT "FK_Venta_Cliente" FOREIGN KEY(cliente_id) REFERENCES Clientes(id)
 );
 
@@ -105,24 +106,27 @@ CREATE TABLE DetalleVentas(
     id INT IDENTITY PRIMARY KEY,
     venta_id INT NOT NULL,
     producto_id INT NOT NULL,
-    lote_id INT NULL,
-    cantidad INT NOT NULL,
+    cantidad_solicitada INT NOT NULL,
+    cantidad_entregada INT DEFAULT 0,
     precio_unitario DECIMAL(10,2) NOT NULL,
     total_linea DECIMAL(12,2) NOT NULL,
-    CONSTRAINT "FK_DetalleVenta_Venta" FOREIGN KEY(venta_id) REFERENCES Ventas(id),
-    CONSTRAINT "FK_DetalleVenta_Producto" FOREIGN KEY(producto_id) REFERENCES CatalogoProductos(id),
-    CONSTRAINT "FK_DetalleVenta_Lote" FOREIGN KEY(lote_id) REFERENCES LotesStock(id)
-);
-
-CREATE TABLE Entregas(
-    id INT IDENTITY PRIMARY KEY,
-    venta_id INT NOT NULL,
-    estatus_entrega VARCHAR(30) DEFAULT 'PENDIENTE', -- PENDIENTE, EN_PROCESO, ENTREGADA, CANCELADA
-    fecha_programada DATETIME NULL,
+    estatus_entrega VARCHAR(30) DEFAULT 'PENDIENTE', -- PENDIENTE, PARCIAL, COMPLETA, CANCELADA
     fecha_entrega DATETIME NULL,
     notas_entrega VARCHAR(200),
+    CONSTRAINT "FK_DetalleVenta_Venta" FOREIGN KEY(venta_id) REFERENCES Ventas(id),
+    CONSTRAINT "FK_DetalleVenta_Producto" FOREIGN KEY(producto_id) REFERENCES CatalogoProductos(id)
+);
+
+CREATE TABLE DetalleEntregas(
+    id INT IDENTITY PRIMARY KEY,
+    detalle_venta_id INT NOT NULL,
+    lote_id INT NOT NULL,
+    cantidad_entregada INT NOT NULL,
+    fecha_entrega DATETIME DEFAULT GETDATE(),
     entregado_por VARCHAR(100),
-    CONSTRAINT "FK_Entrega_Venta" FOREIGN KEY(venta_id) REFERENCES Ventas(id)
+    notas VARCHAR(200),
+    CONSTRAINT "FK_DetalleEntrega_DetalleVenta" FOREIGN KEY(detalle_venta_id) REFERENCES DetalleVentas(id),
+    CONSTRAINT "FK_DetalleEntrega_Lote" FOREIGN KEY(lote_id) REFERENCES LotesStock(id)
 );
 
 CREATE TABLE MovimientosInventario(
