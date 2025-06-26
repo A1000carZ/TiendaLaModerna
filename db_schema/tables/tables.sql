@@ -120,7 +120,8 @@ CREATE TABLE DetalleVentas(
 CREATE TABLE DetalleEntregas(
     id INT IDENTITY PRIMARY KEY,
     detalle_venta_id INT NOT NULL,
-    lote_id INT NOT NULL,
+    lote_id INT NULL,
+    fuente_entrega VARCHAR(20) NOT NULL CHECK (fuente_entrega IN ('LOTE', 'PRODUCTO')),
     cantidad_entregada INT NOT NULL,
     fecha_entrega DATETIME DEFAULT GETDATE(),
     entregado_por VARCHAR(100),
@@ -141,4 +142,19 @@ CREATE TABLE MovimientosInventario(
     fecha_movimiento DATETIME DEFAULT GETDATE(),
     CONSTRAINT "FK_Movimiento_Producto" FOREIGN KEY(producto_id) REFERENCES CatalogoProductos(id),
     CONSTRAINT "FK_Movimiento_Lote" FOREIGN KEY(lote_id) REFERENCES LotesStock(id)
+);
+
+
+
+CREATE TABLE NotificacionStock (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    producto_id INT NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    tipo VARCHAR(20) NOT NULL CHECK (tipo IN ('LOW_STOCK', 'OUT_OF_STOCK', 'RESTOCK')),
+    activo BIT DEFAULT 1,
+    fecha_creacion DATETIME2 DEFAULT GETDATE(),
+    CONSTRAINT FK_NotificacionStock_Producto 
+        FOREIGN KEY (producto_id) REFERENCES CatalogoProductos(id),
+    CONSTRAINT UQ_NotificacionStock_Email_Producto_Tipo 
+        UNIQUE (producto_id, email, tipo)
 );
