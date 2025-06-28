@@ -13,4 +13,7 @@
     <SourceRoot Include="C:\Users\a1000carz\.nuget\packages\" />
     <SourceRoot Include="C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages\" />
   </ItemGroup>
+  <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <Import Project="$(NuGetPackageRoot)sysinfocus.aspnetcore.components\0.0.3.2\buildTransitive\Sysinfocus.AspNetCore.Components.props" Condition="Exists('$(NuGetPackageRoot)sysinfocus.aspnetcore.components\0.0.3.2\buildTransitive\Sysinfocus.AspNetCore.Components.props')" />
+  </ImportGroup>
 </Project>

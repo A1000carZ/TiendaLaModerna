@@ -1,11 +1,14 @@
+using Sysinfocus.AspNetCore.Components;
 using TiendaLaModerna.Components;
-
+using TiendaLaModerna.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddSysinfocus(false);
+builder.Services.AddScoped<IFlowbiteService, FlowbiteService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

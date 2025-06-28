@@ -6,4 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Sysinfocus.AspNetCore.Components" Version="0.0.3.2" />
+  </ItemGroup>
+
 </Project>

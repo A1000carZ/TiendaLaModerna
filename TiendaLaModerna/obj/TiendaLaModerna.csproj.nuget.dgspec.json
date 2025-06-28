@@ -49,6 +49,12 @@
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
+          "dependencies": {
+            "Sysinfocus.AspNetCore.Components": {
+              "target": "Package",
+              "version": "[0.0.3.2, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
