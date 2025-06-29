@@ -1,0 +1,68 @@
+﻿@page "/catalogocategorias/create"
+@using Microsoft.EntityFrameworkCore
+@using TiendaLaModerna.Components.Models.Catalogo
+@using TiendaLaModerna.Components.Repository
+@inject CategoriaRepositorio CategoriaRepo
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>CatalogoCategorias</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="CatalogoCategorias" OnValidSubmit="AddCatalogoCategorias" FormName="create">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert" />
+            <div class="mb-3">
+                <label for="nombre" class="form-label">nombre:</label>
+                <InputText id="nombre" @bind-Value="CatalogoCategorias.nombre" class="form-control" aria-required="true" />
+                <ValidationMessage For="() => CatalogoCategorias.nombre" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="img" class="form-label">img:</label>
+                <InputText id="img" @bind-Value="CatalogoCategorias.img" class="form-control" />
+                <ValidationMessage For="() => CatalogoCategorias.img" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="activo" class="form-label">activo:</label>
+                <InputCheckbox id="activo" @bind-Value="CatalogoCategorias.activo" class="form-check-input" />
+                <ValidationMessage For="() => CatalogoCategorias.activo" class="text-danger" />
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+    @if (redirect)
+    {
+        NavigationManager.NavigateTo("/catalogocategorias", forceLoad: true);
+    }
+</div>
+
+<div>
+    <a href="/catalogocategorias">Back to List</a>
+</div>
+
+@code
+{
+    [SupplyParameterFromForm(FormName = "create")]
+    private CatalogoCategorias CatalogoCategorias { get; set; } = new();
+    private bool redirect = false;
+
+    private async Task AddCatalogoCategorias()
+    {
+        try
+        {
+            Console.WriteLine("Creando...");
+            await CategoriaRepo.CreateAsync(CatalogoCategorias);
+            Console.WriteLine("Creación exitosa.");
+            redirect = true;
+            StateHasChanged(); // fuerza un render inmediato
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error creating categoria: {ex}");
+        }
+    }
+}

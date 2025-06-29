@@ -1,10 +1,13 @@
-﻿namespace TiendaLaModerna.Components.Models.Catalogo
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TiendaLaModerna.Components.Models.Catalogo
 {
     public class Producto
     {
+        [Key]
         public int Id { get; set; }
         public required string Name { get; set; }
-        public Categoria? categoria { get; set; }
+        public CatalogoCategorias? categoria { get; set; }
         public required float Precio { get; set; }
         public required float CostoPromedio { get; set; }
         public string? Img { get; set; }

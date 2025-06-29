@@ -1,0 +1,50 @@
+﻿@page "/catalogocategorias/details"
+@using Microsoft.EntityFrameworkCore
+@using TiendaLaModerna.Components.Models.Catalogo
+@inject IDbContextFactory<TiendaLaModerna.Data.TiendaLaModernaContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>CatalogoCategorias</h2>
+    <hr />
+    @if (catalogocategorias is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">nombre</dt>
+            <dd class="col-sm-10">@catalogocategorias.nombre</dd>
+            <dt class="col-sm-2">img</dt>
+            <dd class="col-sm-10">@catalogocategorias.img</dd>
+            <dt class="col-sm-2">activo</dt>
+            <dd class="col-sm-10">@catalogocategorias.activo</dd>
+        </dl>
+        <div>
+            <a href="@($"/catalogocategorias/edit?id={catalogocategorias.id}")">Edit</a> |
+            <a href="@($"/catalogocategorias")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private CatalogoCategorias? catalogocategorias;
+
+    [SupplyParameterFromQuery]
+    private int id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        catalogocategorias = await context.CatalogoCategorias.FirstOrDefaultAsync(m => m.id == id);
+
+        if (catalogocategorias is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

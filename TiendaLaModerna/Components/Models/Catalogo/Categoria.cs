@@ -1,9 +1,23 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace TiendaLaModerna.Components.Models.Catalogo
 {
-    public class Categoria
+    public class CatalogoCategorias
     {
-        public int Id { get; set; }
-        public required string Name { get; set; }
-        public required string Img { get; set; }
+        [Key]
+        [Column("id", TypeName = "smallint")]
+        public int id { get; set; }
+
+        [Required]
+        public string nombre { get; set; } = string.Empty;
+        public string? img { get; set; }
+
+        public bool activo { get; set; }
+
+        public CatalogoCategorias() { }
+        
     }
+
+
 }
