@@ -21,14 +21,9 @@
         <PropertyColumn Property="producto => producto.Categoria != null ? producto.Categoria.nombre : string.Empty" Title="Categoría" />
         <PropertyColumn Property="producto => producto.Precio" Title="Precio" Format="C" />
         <PropertyColumn Property="producto => producto.CostoPromedio" Title="Costo Promedio" Format="C" />
-        <PropertyColumn Property="producto => producto.Img" Title="Imagen" />
         <PropertyColumn Property="producto => producto.Promocion" Title="Promoción" />
         <PropertyColumn Property="producto => producto.Agotado" Title="Agotado" />
-        <PropertyColumn Property="producto => producto.UmbralInventario" Title="Umbral Inventario" />
-        <PropertyColumn Property="producto => producto.RequiereVencimiento" Title="Requiere Vencimiento" />
-        <PropertyColumn Property="producto => producto.Activo" Title="Activo" />
-        <PropertyColumn Property="producto => producto.FechaCreacion" Title="Fecha Creación" Format="dd/MM/yyyy" />
-
+        <PropertyColumn Property="producto => GetStockStatus(producto)" Title="Stock"/>
         <TemplateColumn Context="producto" Title="Acciones">
             <a href="@($"productos/edit?id={producto.Id}")">Edit</a> |
             <a href="@($"productos/details?id={producto.Id}")">Details</a> |
@@ -44,6 +39,14 @@ else
 @code {
     private List<Producto>? productos;
 
+    private string GetStockStatus(Producto producto)
+    {
+        if (producto.Stock == null)
+        {
+            return "desconocido";
+        }
+        return producto.Stock.CantidadDisponible.ToString();
+    }
     protected override async Task OnInitializedAsync()
     {
         
@@ -52,6 +55,7 @@ else
       
         productos = await context.Producto
             .Include(p => p.Categoria)
+            .Include(p => p.Stock)
             .ToListAsync();
     }
 

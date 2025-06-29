@@ -1,0 +1,69 @@
+﻿@page "/proveedores/create"
+@using Microsoft.EntityFrameworkCore
+@using TiendaLaModerna.Components.Models.Inventario
+@inject IDbContextFactory<TiendaLaModerna.Data.TiendaLaModernaContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>Proveedor</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Proveedor" OnValidSubmit="AddProveedor" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre:</label> 
+                <InputText id="nombre" @bind-Value="Proveedor.Nombre" class="form-control" aria-required="true"/> 
+                <ValidationMessage For="() => Proveedor.Nombre" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="apellido" class="form-label">Apellido:</label> 
+                <InputText id="apellido" @bind-Value="Proveedor.Apellido" class="form-control" /> 
+                <ValidationMessage For="() => Proveedor.Apellido" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="empresa" class="form-label">Empresa:</label> 
+                <InputText id="empresa" @bind-Value="Proveedor.Empresa" class="form-control" /> 
+                <ValidationMessage For="() => Proveedor.Empresa" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="telefono" class="form-label">Telefono:</label> 
+                <InputText id="telefono" @bind-Value="Proveedor.Telefono" class="form-control" /> 
+                <ValidationMessage For="() => Proveedor.Telefono" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="email" class="form-label">Email:</label> 
+                <InputText id="email" @bind-Value="Proveedor.Email" class="form-control" /> 
+                <ValidationMessage For="() => Proveedor.Email" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="activo" class="form-label">Activo:</label> 
+                <InputCheckbox id="activo" @bind-Value="Proveedor.Activo" class="form-check-input" /> 
+                <ValidationMessage For="() => Proveedor.Activo" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/proveedors">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private Proveedor Proveedor { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddProveedor()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Proveedor.Add(Proveedor);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/proveedores");
+    }
+}

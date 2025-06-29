@@ -21,9 +21,14 @@
                 <ValidationMessage For="() => Producto.Name" class="text-danger" /> 
             </div>        
             <div class="mb-3">
-                <label for="categoriaid" class="form-label">CategoriaId:</label> 
-                <InputNumber id="categoriaid" @bind-Value="Producto.CategoriaId" class="form-control" /> 
-                <ValidationMessage For="() => Producto.CategoriaId" class="text-danger" /> 
+                <label for="categoriaid" class="form-label">Categoria:</label> 
+                <InputSelect id="categoriaid" @bind-Value="Producto.CategoriaId" class="form-select">
+                    <option value="">Seleccione una categoría</option>
+                    @foreach (var categoria in categorias)
+                    {
+                        <option value="@categoria.id">@categoria.nombre</option>
+                    }
+                </InputSelect>
             </div>        
             <div class="mb-3">
                 <label for="precio" class="form-label">Precio:</label> 
@@ -39,20 +44,10 @@
                 <label for="img" class="form-label">Img:</label> 
                 <InputText id="img" @bind-Value="Producto.Img" class="form-control" /> 
                 <ValidationMessage For="() => Producto.Img" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="promocion" class="form-label">Promocion:</label> 
-                <InputCheckbox id="promocion" @bind-Value="Producto.Promocion" class="form-check-input" /> 
-                <ValidationMessage For="() => Producto.Promocion" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="agotado" class="form-label">Agotado:</label> 
-                <InputCheckbox id="agotado" @bind-Value="Producto.Agotado" class="form-check-input" /> 
-                <ValidationMessage For="() => Producto.Agotado" class="text-danger" /> 
-            </div>        
+            </div>                   
             <div class="mb-3">
                 <label for="umbralinventario" class="form-label">UmbralInventario:</label> 
-                <InputNumber id="umbralinventario" @bind-Value="Producto.UmbralInventario" class="form-control" /> 
+                <InputNumber id="umbralinventario" min="0" @bind-Value="Producto.UmbralInventario" class="form-control" /> 
                 <ValidationMessage For="() => Producto.UmbralInventario" class="text-danger" /> 
             </div>        
             <div class="mb-3">
@@ -60,16 +55,8 @@
                 <InputCheckbox id="requierevencimiento" @bind-Value="Producto.RequiereVencimiento" class="form-check-input" /> 
                 <ValidationMessage For="() => Producto.RequiereVencimiento" class="text-danger" /> 
             </div>        
-            <div class="mb-3">
-                <label for="activo" class="form-label">Activo:</label> 
-                <InputCheckbox id="activo" @bind-Value="Producto.Activo" class="form-check-input" /> 
-                <ValidationMessage For="() => Producto.Activo" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="fechacreacion" class="form-label">FechaCreacion:</label> 
-                <InputDate id="fechacreacion" @bind-Value="Producto.FechaCreacion" class="form-control" /> 
-                <ValidationMessage For="() => Producto.FechaCreacion" class="text-danger" /> 
-            </div>        
+                 
+                 
             <button type="submit" class="btn btn-primary">Create</button>
         </EditForm>
     </div>
@@ -80,6 +67,7 @@
 </div>
 
 @code {
+    private List<CatalogoCategorias> categorias = [];
     [SupplyParameterFromForm]
     private Producto Producto { get; set; } = new()
     {
@@ -87,12 +75,23 @@
         CategoriaId = null,
         Precio = 0,
         CostoPromedio = 0,
+        
     };
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+
+        categorias = await context.CatalogoCategorias.ToListAsync();
+    }
+
 
     // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task AddProducto()
     {
         using var context = DbFactory.CreateDbContext();
+        Console.WriteLine("CategoriaId: " + Producto.CategoriaId);
+        Producto.FechaCreacion = DateTime.Now;
         context.Producto.Add(Producto);
         await context.SaveChangesAsync();
         NavigationManager.NavigateTo("/productos");

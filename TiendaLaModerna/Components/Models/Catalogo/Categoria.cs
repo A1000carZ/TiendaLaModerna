@@ -7,7 +7,7 @@ namespace TiendaLaModerna.Components.Models.Catalogo
     {
         [Key]
         [Column("id", TypeName = "smallint")]
-        public int id { get; set; }
+        public short id { get; set; }
 
         [Required]
         public string nombre { get; set; } = string.Empty;

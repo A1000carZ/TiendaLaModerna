@@ -1,5 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TiendaLaModerna.Components.Models.Inventario;
 
 namespace TiendaLaModerna.Components.Models.Catalogo
 {
@@ -7,20 +9,22 @@ namespace TiendaLaModerna.Components.Models.Catalogo
     public class Producto
     {
         [Key]
+        [Column("id", TypeName = "int")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [Column("nombre", TypeName = "varchar(100)")]
         public required string Name { get; set; }
 
         [Column("categoria_id")]
-        public int? CategoriaId { get; set; }
+        public short? CategoriaId { get; set; }
 
         // Navigation property
         [ForeignKey("CategoriaId")]
         public virtual CatalogoCategorias? Categoria { get; set; }
         [Column("precio", TypeName = "decimal(10,2)")]
-        public required float Precio { get; set; }
+        public required decimal Precio { get; set; }
         [Column("costo_promedio", TypeName = "decimal(10,2)")]
-        public required float CostoPromedio { get; set; }
+        public required decimal CostoPromedio { get; set; }
         [Column("img", TypeName = "varchar(512)")]
         public string? Img { get; set; }
         [Column("promocion", TypeName = "bit")]
@@ -35,6 +39,8 @@ namespace TiendaLaModerna.Components.Models.Catalogo
         public bool Activo { get; set; }
         [Column("fecha_creacion", TypeName = "datetime")]
         public DateTime FechaCreacion { get; set; }
-        
+
+        public virtual StockProducto? Stock { get; set; }
+
     }
 }

@@ -1,0 +1,114 @@
+﻿@page "/proveedores/edit"
+@using Microsoft.EntityFrameworkCore
+@using TiendaLaModerna.Components.Models.Inventario
+@inject IDbContextFactory<TiendaLaModerna.Data.TiendaLaModernaContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Proveedor</h2>
+<hr />
+@if (Proveedor is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Proveedor" OnValidSubmit="UpdateProveedor" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="Proveedor.Id" value="@Proveedor.Id" />
+                <div class="mb-3">
+                    <label for="nombre" class="form-label">Nombre:</label>
+                    <InputText id="nombre" @bind-Value="Proveedor.Nombre" class="form-control" aria-required="true"/>
+                    <ValidationMessage For="() => Proveedor.Nombre" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="apellido" class="form-label">Apellido:</label>
+                    <InputText id="apellido" @bind-Value="Proveedor.Apellido" class="form-control" />
+                    <ValidationMessage For="() => Proveedor.Apellido" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="empresa" class="form-label">Empresa:</label>
+                    <InputText id="empresa" @bind-Value="Proveedor.Empresa" class="form-control" />
+                    <ValidationMessage For="() => Proveedor.Empresa" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="telefono" class="form-label">Telefono:</label>
+                    <InputText id="telefono" @bind-Value="Proveedor.Telefono" class="form-control" />
+                    <ValidationMessage For="() => Proveedor.Telefono" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email:</label>
+                    <InputText id="email" @bind-Value="Proveedor.Email" class="form-control" />
+                    <ValidationMessage For="() => Proveedor.Email" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="activo" class="form-label">Activo:</label>
+                    <InputCheckbox id="activo" @bind-Value="Proveedor.Activo" class="form-check-input" />
+                    <ValidationMessage For="() => Proveedor.Activo" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/proveedors">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private Proveedor? Proveedor { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Proveedor ??= await context.Proveedor.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (Proveedor is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateProveedor()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Proveedor!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!ProveedorExists(Proveedor!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/proveedores");
+    }
+
+    private bool ProveedorExists(int id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Proveedor.Any(e => e.Id == id);
+    }
+}

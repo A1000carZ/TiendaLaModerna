@@ -33,7 +33,7 @@ namespace TiendaLaModerna.Components.Repository.Catalogo
             // Ejecutar procedimiento y recuperar el ID insertado
             var idResult = await _context.Database.ExecuteSqlRawAsync("EXEC sp_InsertCategoria @nombre, @img, @activo, @id OUTPUT", parameters);
 
-            entity.id =(int) parameters[3].Value;
+            entity.id =(short) parameters[3].Value;
             return entity;
         }
 

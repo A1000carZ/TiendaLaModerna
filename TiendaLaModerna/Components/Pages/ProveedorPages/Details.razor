@@ -1,0 +1,56 @@
+﻿@page "/proveedores/details"
+@using Microsoft.EntityFrameworkCore
+@using TiendaLaModerna.Components.Models.Inventario
+@inject IDbContextFactory<TiendaLaModerna.Data.TiendaLaModernaContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Proveedor</h2>
+    <hr />
+    @if (proveedor is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Nombre</dt>
+            <dd class="col-sm-10">@proveedor.Nombre</dd>
+            <dt class="col-sm-2">Apellido</dt>
+            <dd class="col-sm-10">@proveedor.Apellido</dd>
+            <dt class="col-sm-2">Empresa</dt>
+            <dd class="col-sm-10">@proveedor.Empresa</dd>
+            <dt class="col-sm-2">Telefono</dt>
+            <dd class="col-sm-10">@proveedor.Telefono</dd>
+            <dt class="col-sm-2">Email</dt>
+            <dd class="col-sm-10">@proveedor.Email</dd>
+            <dt class="col-sm-2">Activo</dt>
+            <dd class="col-sm-10">@proveedor.Activo</dd>
+        </dl>
+        <div>
+            <a href="@($"/proveedores/edit?id={proveedor.Id}")">Edit</a> |
+            <a href="@($"/proveedores")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private Proveedor? proveedor;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        proveedor = await context.Proveedor.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (proveedor is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}
