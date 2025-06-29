@@ -1,0 +1,40 @@
+﻿@page "/clientes"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using TiendaLaModerna.Components.Models.Venta
+@using TiendaLaModerna.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<TiendaLaModerna.Data.TiendaLaModernaContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="clientes/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.Cliente">
+    <PropertyColumn Property="cliente => cliente.Nombre" />
+    <PropertyColumn Property="cliente => cliente.Apellido" />
+    <PropertyColumn Property="cliente => cliente.Telefono" />
+    <PropertyColumn Property="cliente => cliente.Email" />
+    <PropertyColumn Property="cliente => cliente.Activo" />
+
+    <TemplateColumn Context="cliente">
+        <a href="@($"clientes/edit?id={cliente.Id}")">Edit</a> |
+        <a href="@($"clientes/details?id={cliente.Id}")">Details</a> |
+        <a href="@($"clientes/delete?id={cliente.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private TiendaLaModernaContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

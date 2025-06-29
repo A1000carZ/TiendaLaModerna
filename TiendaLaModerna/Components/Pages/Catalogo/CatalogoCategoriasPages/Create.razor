@@ -1,7 +1,8 @@
-﻿@page "/catalogocategorias/create"
+﻿@page "/catalogo/categorias/create"
 @using Microsoft.EntityFrameworkCore
 @using TiendaLaModerna.Components.Models.Catalogo
 @using TiendaLaModerna.Components.Repository
+@using TiendaLaModerna.Components.Repository.Catalogo
 @inject CategoriaRepositorio CategoriaRepo
 @inject NavigationManager NavigationManager
 
@@ -36,7 +37,7 @@
     </div>
     @if (redirect)
     {
-        NavigationManager.NavigateTo("/catalogocategorias", forceLoad: true);
+        NavigationManager.NavigateTo("/catalogo/categorias", forceLoad: true);
     }
 </div>
 

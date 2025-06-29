@@ -1,0 +1,95 @@
+﻿@page "/productos/delete"
+@using Microsoft.EntityFrameworkCore
+@using TiendaLaModerna.Components.Models.Catalogo
+@inject IDbContextFactory<TiendaLaModerna.Data.TiendaLaModernaContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Delete</PageTitle>
+
+<h1>Delete</h1>
+
+<p>Are you sure you want to delete this?</p>
+<div>
+    <h2>Producto</h2>
+    <hr />
+    @if (producto is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Name</dt>
+            <dd class="col-sm-10">@producto.Name</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">CategoriaId</dt>
+            <dd class="col-sm-10">@producto.CategoriaId</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Precio</dt>
+            <dd class="col-sm-10">@producto.Precio</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">CostoPromedio</dt>
+            <dd class="col-sm-10">@producto.CostoPromedio</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Img</dt>
+            <dd class="col-sm-10">@producto.Img</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Promocion</dt>
+            <dd class="col-sm-10">@producto.Promocion</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Agotado</dt>
+            <dd class="col-sm-10">@producto.Agotado</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">UmbralInventario</dt>
+            <dd class="col-sm-10">@producto.UmbralInventario</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">RequiereVencimiento</dt>
+            <dd class="col-sm-10">@producto.RequiereVencimiento</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Activo</dt>
+            <dd class="col-sm-10">@producto.Activo</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">FechaCreacion</dt>
+            <dd class="col-sm-10">@producto.FechaCreacion</dd>
+        </dl>
+        <EditForm method="post" Model="producto" OnValidSubmit="DeleteProducto" FormName="delete" Enhance>
+            <button type="submit" class="btn btn-danger" disabled="@(producto is null)">Delete</button> |
+            <a href="/productos">Back to List</a>
+        </EditForm>
+    }
+</div>
+
+@code {
+    private Producto? producto;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        producto = await context.Producto.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (producto is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    private async Task DeleteProducto()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Producto.Remove(producto!);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/productos");
+    }
+}

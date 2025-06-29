@@ -1,0 +1,66 @@
+﻿@page "/productos/details"
+@using Microsoft.EntityFrameworkCore
+@using TiendaLaModerna.Components.Models.Catalogo
+@inject IDbContextFactory<TiendaLaModerna.Data.TiendaLaModernaContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Producto</h2>
+    <hr />
+    @if (producto is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Name</dt>
+            <dd class="col-sm-10">@producto.Name</dd>
+            <dt class="col-sm-2">CategoriaId</dt>
+            <dd class="col-sm-10">@producto.CategoriaId</dd>
+            <dt class="col-sm-2">Precio</dt>
+            <dd class="col-sm-10">@producto.Precio</dd>
+            <dt class="col-sm-2">CostoPromedio</dt>
+            <dd class="col-sm-10">@producto.CostoPromedio</dd>
+            <dt class="col-sm-2">Img</dt>
+            <dd class="col-sm-10">@producto.Img</dd>
+            <dt class="col-sm-2">Promocion</dt>
+            <dd class="col-sm-10">@producto.Promocion</dd>
+            <dt class="col-sm-2">Agotado</dt>
+            <dd class="col-sm-10">@producto.Agotado</dd>
+            <dt class="col-sm-2">UmbralInventario</dt>
+            <dd class="col-sm-10">@producto.UmbralInventario</dd>
+            <dt class="col-sm-2">RequiereVencimiento</dt>
+            <dd class="col-sm-10">@producto.RequiereVencimiento</dd>
+            <dt class="col-sm-2">Activo</dt>
+            <dd class="col-sm-10">@producto.Activo</dd>
+            <dt class="col-sm-2">FechaCreacion</dt>
+            <dd class="col-sm-10">@producto.FechaCreacion</dd>
+        </dl>
+        <div>
+            <a href="@($"/productos/edit?id={producto.Id}")">Edit</a> |
+            <a href="@($"/productos")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private Producto? producto;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        producto = await context.Producto.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (producto is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

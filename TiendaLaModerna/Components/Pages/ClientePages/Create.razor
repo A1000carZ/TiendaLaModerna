@@ -1,0 +1,70 @@
+﻿@page "/clientes/create"  
+@using Microsoft.EntityFrameworkCore  
+@using TiendaLaModerna.Components.Models.Venta  
+@inject IDbContextFactory<TiendaLaModerna.Data.TiendaLaModernaContext> DbFactory  
+@inject NavigationManager NavigationManager  
+
+<PageTitle>Create</PageTitle>  
+
+<h1>Create</h1>  
+
+<h2>Cliente</h2>  
+<hr />  
+<div class="row">  
+    <div class="col-md-4">  
+        <EditForm method="post" Model="Cliente" OnValidSubmit="AddCliente" FormName="create" Enhance>  
+            <DataAnnotationsValidator />  
+            <ValidationSummary class="text-danger" role="alert"/>  
+            <div class="mb-3">  
+                <label for="nombre" class="form-label">Nombre:</label>   
+                <InputText id="nombre" @bind-Value="Cliente.Nombre" class="form-control" />   
+                <ValidationMessage For="() => Cliente.Nombre" class="text-danger" />   
+            </div>          
+            <div class="mb-3">  
+                <label for="apellido" class="form-label">Apellido:</label>   
+                <InputText id="apellido" @bind-Value="Cliente.Apellido" class="form-control" />   
+                <ValidationMessage For="() => Cliente.Apellido" class="text-danger" />   
+            </div>          
+            <div class="mb-3">  
+                <label for="telefono" class="form-label">Telefono:</label>   
+                <InputText id="telefono" @bind-Value="Cliente.Telefono" class="form-control" />   
+                <ValidationMessage For="() => Cliente.Telefono" class="text-danger" />   
+            </div>          
+            <div class="mb-3">  
+                <label for="email" class="form-label">Email:</label>   
+                <InputText id="email" @bind-Value="Cliente.Email" class="form-control" />   
+                <ValidationMessage For="() => Cliente.Email" class="text-danger" />   
+            </div>          
+            <div class="mb-3">  
+                <label for="activo" class="form-label">Activo:</label>   
+                <InputCheckbox id="activo" @bind-Value="Cliente.Activo" class="form-check-input" />   
+                <ValidationMessage For="() => Cliente.Activo" class="text-danger" />   
+            </div>          
+            <button type="submit" class="btn btn-primary">Create</button>  
+        </EditForm>  
+    </div>  
+</div>  
+
+<div>  
+    <a href="/clientes">Back to List</a>  
+</div>  
+
+@code {  
+    [SupplyParameterFromForm]  
+    private Cliente Cliente { get; set; } = new()  
+    {  
+        Nombre = string.Empty,  
+        Apellido = string.Empty,  
+        Telefono = string.Empty,  
+        Email = string.Empty  
+    };  
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.  
+    private async Task AddCliente()  
+    {  
+        using var context = DbFactory.CreateDbContext();  
+        context.Cliente.Add(Cliente);  
+        await context.SaveChangesAsync();  
+        NavigationManager.NavigateTo("/clientes");  
+    }  
+}

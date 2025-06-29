@@ -1,0 +1,100 @@
+﻿@page "/productos/create"
+@using Microsoft.EntityFrameworkCore
+@using TiendaLaModerna.Components.Models.Catalogo
+@inject IDbContextFactory<TiendaLaModerna.Data.TiendaLaModernaContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>Producto</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Producto" OnValidSubmit="AddProducto" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="name" class="form-label">Name:</label> 
+                <InputText id="name" @bind-Value="Producto.Name" class="form-control" /> 
+                <ValidationMessage For="() => Producto.Name" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="categoriaid" class="form-label">CategoriaId:</label> 
+                <InputNumber id="categoriaid" @bind-Value="Producto.CategoriaId" class="form-control" /> 
+                <ValidationMessage For="() => Producto.CategoriaId" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="precio" class="form-label">Precio:</label> 
+                <InputNumber id="precio" @bind-Value="Producto.Precio" class="form-control" /> 
+                <ValidationMessage For="() => Producto.Precio" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="costopromedio" class="form-label">CostoPromedio:</label> 
+                <InputNumber id="costopromedio" @bind-Value="Producto.CostoPromedio" class="form-control" /> 
+                <ValidationMessage For="() => Producto.CostoPromedio" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="img" class="form-label">Img:</label> 
+                <InputText id="img" @bind-Value="Producto.Img" class="form-control" /> 
+                <ValidationMessage For="() => Producto.Img" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="promocion" class="form-label">Promocion:</label> 
+                <InputCheckbox id="promocion" @bind-Value="Producto.Promocion" class="form-check-input" /> 
+                <ValidationMessage For="() => Producto.Promocion" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="agotado" class="form-label">Agotado:</label> 
+                <InputCheckbox id="agotado" @bind-Value="Producto.Agotado" class="form-check-input" /> 
+                <ValidationMessage For="() => Producto.Agotado" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="umbralinventario" class="form-label">UmbralInventario:</label> 
+                <InputNumber id="umbralinventario" @bind-Value="Producto.UmbralInventario" class="form-control" /> 
+                <ValidationMessage For="() => Producto.UmbralInventario" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="requierevencimiento" class="form-label">RequiereVencimiento:</label> 
+                <InputCheckbox id="requierevencimiento" @bind-Value="Producto.RequiereVencimiento" class="form-check-input" /> 
+                <ValidationMessage For="() => Producto.RequiereVencimiento" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="activo" class="form-label">Activo:</label> 
+                <InputCheckbox id="activo" @bind-Value="Producto.Activo" class="form-check-input" /> 
+                <ValidationMessage For="() => Producto.Activo" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="fechacreacion" class="form-label">FechaCreacion:</label> 
+                <InputDate id="fechacreacion" @bind-Value="Producto.FechaCreacion" class="form-control" /> 
+                <ValidationMessage For="() => Producto.FechaCreacion" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/productos">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private Producto Producto { get; set; } = new()
+    {
+        Name = string.Empty,
+        CategoriaId = null,
+        Precio = 0,
+        CostoPromedio = 0,
+    };
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddProducto()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Producto.Add(Producto);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/productos");
+    }
+}

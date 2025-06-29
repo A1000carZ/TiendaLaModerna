@@ -1,0 +1,54 @@
+﻿@page "/clientes/details"
+@using Microsoft.EntityFrameworkCore
+@using TiendaLaModerna.Components.Models.Venta
+@inject IDbContextFactory<TiendaLaModerna.Data.TiendaLaModernaContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Cliente</h2>
+    <hr />
+    @if (cliente is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Nombre</dt>
+            <dd class="col-sm-10">@cliente.Nombre</dd>
+            <dt class="col-sm-2">Apellido</dt>
+            <dd class="col-sm-10">@cliente.Apellido</dd>
+            <dt class="col-sm-2">Telefono</dt>
+            <dd class="col-sm-10">@cliente.Telefono</dd>
+            <dt class="col-sm-2">Email</dt>
+            <dd class="col-sm-10">@cliente.Email</dd>
+            <dt class="col-sm-2">Activo</dt>
+            <dd class="col-sm-10">@cliente.Activo</dd>
+        </dl>
+        <div>
+            <a href="@($"/clientes/edit?id={cliente.Id}")">Edit</a> |
+            <a href="@($"/clientes")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private Cliente? cliente;
+
+    [SupplyParameterFromQuery]
+    private int? Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        cliente = await context.Cliente.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (cliente is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

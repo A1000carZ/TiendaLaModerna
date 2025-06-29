@@ -16,7 +16,9 @@ namespace TiendaLaModerna.Components.Models.Catalogo
         public bool activo { get; set; }
 
         public CatalogoCategorias() { }
-        
+
+        public virtual ICollection<Producto>? Productos { get; set; }
+
     }
 
 

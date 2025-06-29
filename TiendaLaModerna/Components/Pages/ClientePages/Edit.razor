@@ -1,0 +1,109 @@
+﻿@page "/clientes/edit"
+@using Microsoft.EntityFrameworkCore
+@using TiendaLaModerna.Components.Models.Venta
+@inject IDbContextFactory<TiendaLaModerna.Data.TiendaLaModernaContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Cliente</h2>
+<hr />
+@if (Cliente is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Cliente" OnValidSubmit="UpdateCliente" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="Cliente.Id" value="@Cliente.Id" />
+                <div class="mb-3">
+                    <label for="nombre" class="form-label">Nombre:</label>
+                    <InputText id="nombre" @bind-Value="Cliente.Nombre" class="form-control" />
+                    <ValidationMessage For="() => Cliente.Nombre" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="apellido" class="form-label">Apellido:</label>
+                    <InputText id="apellido" @bind-Value="Cliente.Apellido" class="form-control" />
+                    <ValidationMessage For="() => Cliente.Apellido" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="telefono" class="form-label">Telefono:</label>
+                    <InputText id="telefono" @bind-Value="Cliente.Telefono" class="form-control" />
+                    <ValidationMessage For="() => Cliente.Telefono" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email:</label>
+                    <InputText id="email" @bind-Value="Cliente.Email" class="form-control" />
+                    <ValidationMessage For="() => Cliente.Email" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="activo" class="form-label">Activo:</label>
+                    <InputCheckbox id="activo" @bind-Value="Cliente.Activo" class="form-check-input" />
+                    <ValidationMessage For="() => Cliente.Activo" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/clientes">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int? Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private Cliente? Cliente { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Cliente ??= await context.Cliente.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (Cliente is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateCliente()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Cliente!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!ClienteExists(Cliente!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/clientes");
+    }
+
+    private bool ClienteExists(int? id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Cliente.Any(e => e.Id == id);
+    }
+}

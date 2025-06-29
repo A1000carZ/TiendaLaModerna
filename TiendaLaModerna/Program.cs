@@ -1,17 +1,20 @@
-using Microsoft.EntityFrameworkCore;
+ï»¿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Sysinfocus.AspNetCore.Components;
 using System.Reflection;
 using TiendaLaModerna.Components;
 using TiendaLaModerna.Components.Models.Catalogo;
-using TiendaLaModerna.Components.Repository;
+using TiendaLaModerna.Components.Repository.Catalogo;
 using TiendaLaModerna.Data;
 using TiendaLaModerna.Services;
 var builder = WebApplication.CreateBuilder(args);
 
+
 builder.Services.AddDbContextFactory<TiendaLaModernaContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("TiendaLaModernaContext") ?? throw new InvalidOperationException("Connection string 'TiendaLaModernaContext' not found.")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("TiendaLaModernaContext")));
+
+
 
 builder.Services.AddQuickGridEntityFrameworkAdapter();
 
@@ -38,7 +41,7 @@ builder.Services.AddCors(builder =>
 builder.Services.AddSysinfocus(false);
 builder.Services.AddScoped<IFlowbiteService, FlowbiteService>();
 builder.Services.AddScoped<CategoriaRepositorio>();
-
+builder.Services.AddScoped<ProductoRepositorio>();
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -53,7 +56,7 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "Tienda La Moderna API",
         Version = "v1",
-        Description = "API para gestión de catálogos de Tienda La Moderna"
+        Description = "API para gestiï¿½n de catï¿½logos de Tienda La Moderna"
     });
 
     c.SupportNonNullableReferenceTypes();
@@ -71,7 +74,6 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
     app.UseMigrationsEndPoint();
-
 }
 else
 {
@@ -79,9 +81,10 @@ else
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Tienda La Moderna API V1");
-        c.RoutePrefix = "swagger"; // Esto hace que Swagger esté en /swagger
+        c.RoutePrefix = "swagger"; // Esto hace que Swagger estï¿½ en /swagger
     });
-   
+    app.UseMigrationsEndPoint();
+
     app.UseDeveloperExceptionPage();
 }
 

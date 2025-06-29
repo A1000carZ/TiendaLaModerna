@@ -1,4 +1,4 @@
-﻿@page "/catalogocategorias"
+﻿@page "/catalogo/categorias"
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using TiendaLaModerna.Components.Models.Catalogo
@@ -11,7 +11,7 @@
 <h1>Index</h1>
 
 <p>
-    <a href="catalogocategorias/create">Create New</a>
+    <a href="catalogo/categorias/create">Create New</a>
 </p>
 
 <QuickGrid TGridItem="CatalogoCategorias" Class="table" Items="categorias">
@@ -20,9 +20,9 @@
     <PropertyColumn Property="catalogocategorias => catalogocategorias.activo" />
 
     <TemplateColumn Context="catalogocategorias">
-        <a href="@($"catalogocategorias/edit?id={catalogocategorias.id}")">Edit</a> |
-        <a href="@($"catalogocategorias/details?id={catalogocategorias.id}")">Details</a> |
-        <a href="@($"catalogocategorias/delete?id={catalogocategorias.id}")">Delete</a>
+        <a href="@($"catalogo/categorias/edit?id={catalogocategorias.id}")">Edit</a> |
+        <a href="@($"catalogo/categorias/details?id={catalogocategorias.id}")">Details</a> |
+        <a href="@($"catalogo/categorias/delete?id={catalogocategorias.id}")">Delete</a>
     </TemplateColumn>
 </QuickGrid>
 

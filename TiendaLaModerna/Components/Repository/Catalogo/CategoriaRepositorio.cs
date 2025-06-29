@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 using TiendaLaModerna.Components.Models.Catalogo;
 using TiendaLaModerna.Data;
 
-namespace TiendaLaModerna.Components.Repository
+namespace TiendaLaModerna.Components.Repository.Catalogo
 {
     public class CategoriaRepositorio : Repository<CatalogoCategorias, int>
     {
         private readonly TiendaLaModernaContext _context;
-        private readonly DbSet<CatalogoCategorias> _dbSet;
+        
 
         public CategoriaRepositorio(TiendaLaModernaContext context)
         {
             _context = context;
-            _dbSet = context.Set<CatalogoCategorias>();
+            
         }
 
         public async Task<CatalogoCategorias> CreateAsync(CatalogoCategorias entity)

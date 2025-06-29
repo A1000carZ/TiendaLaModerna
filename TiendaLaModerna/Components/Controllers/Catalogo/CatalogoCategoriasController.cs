@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TiendaLaModerna.Components.Models.Catalogo;
-using TiendaLaModerna.Components.Repository;
+using TiendaLaModerna.Components.Repository.Catalogo;
 
 namespace TiendaLaModerna.Components.Controllers.Catalogo
 {
