@@ -1,0 +1,60 @@
+﻿@page "/inventario/details"
+@using Microsoft.EntityFrameworkCore
+@using TiendaLaModerna.Components.Models.Inventario
+@inject IDbContextFactory<TiendaLaModerna.Data.TiendaLaModernaContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>MovimientoInventario</h2>
+    <hr />
+    @if (movimientoinventario is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">ProductoId</dt>
+            <dd class="col-sm-10">@movimientoinventario.ProductoId</dd>
+            <dt class="col-sm-2">LoteId</dt>
+            <dd class="col-sm-10">@movimientoinventario.LoteId</dd>
+            <dt class="col-sm-2">TipoMovimiento</dt>
+            <dd class="col-sm-10">@movimientoinventario.TipoMovimiento</dd>
+            <dt class="col-sm-2">Cantidad</dt>
+            <dd class="col-sm-10">@movimientoinventario.Cantidad</dd>
+            <dt class="col-sm-2">TipoReferencia</dt>
+            <dd class="col-sm-10">@movimientoinventario.TipoReferencia</dd>
+            <dt class="col-sm-2">Referencia</dt>
+            <dd class="col-sm-10">@movimientoinventario.Referencia</dd>
+            <dt class="col-sm-2">Notas</dt>
+            <dd class="col-sm-10">@movimientoinventario.Notas</dd>
+            <dt class="col-sm-2">FechaMovimiento</dt>
+            <dd class="col-sm-10">@movimientoinventario.FechaMovimiento</dd>
+        </dl>
+        <div>
+            <a href="@($"/movimientoinventarios/edit?id={movimientoinventario.Id}")">Edit</a> |
+            <a href="@($"/movimientoinventarios")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private MovimientoInventario? movimientoinventario;
+
+    [SupplyParameterFromQuery]
+    private int? Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        movimientoinventario = await context.MovimientoInventario.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (movimientoinventario is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

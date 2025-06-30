@@ -1,0 +1,569 @@
+﻿@page "/punto-venta"
+@rendermode InteractiveServer
+@using Microsoft.EntityFrameworkCore
+@using TiendaLaModerna.Components.Models.Catalogo
+@using TiendaLaModerna.Components.Models.Venta
+@inject IDbContextFactory<TiendaLaModerna.Data.TiendaLaModernaContext> DbFactory
+@inject NavigationManager NavigationManager
+@using System.ComponentModel.DataAnnotations
+
+<PageTitle>Crear Venta</PageTitle>
+
+<div class="min-h-screen bg-gray-50">
+    <div class="flex max-w-7xl mx-auto">
+
+        <!-- Main Product Section -->
+        <div class="flex-1 p-6">
+            <!-- Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Punto de Venta</h1>
+                <span class="text-gray-600 text-lg">@DateTime.Now.ToString("dd MMMM yyyy")</span>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="mb-8">
+                <div class="relative max-w-md">
+                    <input type="search" autofocus value="@searchTerm"
+                           @oninput="OnSearchInput"
+                           placeholder="Buscar productos..."
+                           class="w-full bg-white border border-gray-300 text-gray-900 px-4 py-3 rounded-lg pl-12
+                                  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                                  shadow-sm transition-all duration-200" />
+                    <svg class="absolute left-4 top-3.5 w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+            </div>
+
+      
+            <div class="mb-8">
+                <div class="flex space-x-4 overflow-x-auto pb-2">
+                    <!-- All Categories -->
+                    <div @onclick="() => SelectCategory(null)"
+                         class="@(selectedCategory == null ? "bg-blue-600 text-white shadow-lg" : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200")
+                                 cursor-pointer rounded-xl p-4 text-center min-w-[120px] transition-all duration-200 shadow-sm">
+                        <div class="w-12 h-12 @(selectedCategory == null ? "bg-blue-500" : "bg-gray-100") rounded-lg mx-auto mb-3 flex items-center justify-center">
+                            <span class="text-2xl">📋</span>
+                        </div>
+                        <span class="text-sm font-medium">Todos</span>
+                    </div>
+
+                    <!-- Category Items -->
+                    @foreach (var category in categories)
+                    {
+                        <div @onclick="() => SelectCategory(category)"
+                             class="@(selectedCategory == category ? "bg-blue-600 text-white shadow-lg" : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200")
+                                             cursor-pointer rounded-xl p-4 text-center min-w-[120px] transition-all duration-200 shadow-sm">
+                            <div class="w-12 h-12 @(selectedCategory == category ? "bg-blue-500" : "bg-gray-100") rounded-lg mx-auto mb-3 flex items-center justify-center">
+                                <span class="text-2xl">🏷️</span>
+                            </div>
+                            <span class="text-sm font-medium">@category?.nombre</span>
+                        </div>
+                    }
+                </div>
+            </div>
+
+          
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">@(selectedCategory?.nombre ?? "Todos los Productos")</h2>
+
+                @if (filteredProducts.Any())
+                {
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        @foreach (var product in filteredProducts)
+                        {
+                            
+                            <div class="bg-white rounded-xl p-6 border border-gray-200 hover:shadow-lg transition-all duration-200 cursor-pointer relative
+                            @(product.Stock?.CantidadDisponible > 0 ? "hover:border-blue-300" : "opacity-60 cursor-not-allowed")"
+                                 @onclick="() => AddToCart(product)">
+
+
+                                @if (product.Promocion)
+                                {
+                                    <div class="absolute -top-2 -right-2 z-10">
+                                        <div class="bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg transform rotate-12">
+                                            <span class="flex items-center space-x-1">
+                                                <span>🔥</span>
+                                                <span>OFERTA</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                }
+
+                            
+                                <div class="w-20 h-20 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full mx-auto mb-4 flex items-center justify-center">
+                                    <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 18 20">
+                                        <path d="M17 5.923A1 1 0 0 0 16 5h-3V4a4 4 0 1 0-8 0v1H2a1 1 0 0 0-1 .923L.086 17.846A2 2 0 0 0 2.08 20h13.84a2 2 0 0 0 1.994-2.153L17 5.923ZM7 9a1 1 0 0 1-2 0V7h2v2Zm0-5a2 2 0 1 1 4 0v1H7V4Zm6 5a1 1 0 1 1-2 0V7h2v2Z" />
+                                    </svg>
+                                </div>
+
+                             
+                                <h3 class="font-semibold text-lg text-gray-900 mb-3 text-center">@product.Name</h3>
+
+                                
+                                <div class="mb-3">
+                                    @if (product.Promocion)
+                                    {
+                                        <div class="text-center">
+                                            <span class="text-sm text-gray-500 line-through">$@product.Precio.ToString("F2")</span>
+                                            <span class="text-xl font-bold text-red-600 ml-2">$@GetPromoPrice(product).ToString("F2")</span>
+                                            <div class="text-xs text-red-600 font-medium mt-1">
+                                                Ahorra $@((product.Precio - GetPromoPrice(product)).ToString("F2"))
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="text-center">
+                                            <span class="text-xl font-bold text-gray-900">$@product.Precio.ToString("F2")</span>
+                                        </div>
+                                    }
+                                </div>
+
+                            
+                                <div class="flex justify-center">
+                                    <span class="@((product.Stock?.CantidadDisponible ?? 0) > 0 ? "text-green-600 bg-green-50" : "text-red-600 bg-red-50")
+                                     text-xs font-medium px-3 py-1 rounded-full">
+                                        @((product.Stock?.CantidadDisponible ?? 0) > 0 ? $"✓ Disponible(s) {product.Stock?.CantidadDisponible}" : "✗ Agotado")
+                                    </span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-16">
+                        <div class="w-24 h-24 bg-gray-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                            <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                        <p class="text-gray-500 text-lg">No se encontraron productos</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="w-96 bg-white border-l border-gray-200 p-6">
+            <h2 class="text-xl font-bold text-gray-900 mb-6">Carrito de Compras</h2>
+
+           
+            <div class="space-y-4 mb-6 max-h-80 overflow-y-auto">
+                @if (lines.Any())
+                {
+                    @foreach (var item in lines)
+                    {
+                        <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
+                            <div class="flex items-center space-x-3">
+                                
+                                <div class="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 18 20">
+                                        <path d="M17 5.923A1 1 0 0 0 16 5h-3V4a4 4 0 1 0-8 0v1H2a1 1 0 0 0-1 .923L.086 17.846A2 2 0 0 0 2.08 20h13.84a2 2 0 0 0 1.994-2.153L17 5.923ZM7 9a1 1 0 0 1-2 0V7h2v2Zm0-5a2 2 0 1 1 4 0v1H7V4Zm6 5a1 1 0 1 1-2 0V7h2v2Z" />
+                                    </svg>
+                                </div>
+
+                               
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="font-medium text-gray-900 truncate">@item?.Producto?.Name</h4>
+                                    <span class="text-green-600 font-semibold">$@item.TotalLinea.ToString("F2")</span>
+                                </div>
+
+                               
+                                <div class="flex items-center space-x-2 flex-shrink-0">
+                                    <button @onclick="() => DecreaseQuantity(item.ProductoId)"
+                                            class="w-8 h-8 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center transition-colors">
+                                        <span class="text-gray-600 font-medium">-</span>
+                                    </button>
+                                    <span class="w-8 text-center font-medium text-gray-900">@item.CantidadSolicitada</span>
+                                    <button @onclick="() => IncreaseQuantity(item.ProductoId)"
+                                            class="w-8 h-8 bg-blue-600 hover:bg-blue-700 text-white rounded-full flex items-center justify-center transition-colors">
+                                        <span class="font-medium">+</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                        
+                            <div class="mt-3">
+                                <button @onclick="() => AddNotes(item.ProductoId)"
+                                        class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                                    📝 Agregar Notas
+                                </button>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center py-12">
+                        <div class="w-16 h-16 bg-gray-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5H18"></path>
+                            </svg>
+                        </div>
+                        <p class="text-gray-500">Carrito vacío</p>
+                    </div>
+                }
+            </div>
+
+         
+            <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
+                <h3 class="font-semibold text-gray-900 mb-3">Información del Cliente</h3>
+                <select @bind="selectedClienteId"
+                        class="w-full bg-white border border-gray-300 text-gray-900 px-3 py-2 rounded-lg
+                               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="">Selecciona un cliente</option>
+                    @foreach (var cliente in clientes)
+                    {
+                        <option value="@cliente.Id">@cliente.Nombre @cliente.Apellido</option>
+                    }
+                </select>
+            </div>
+
+            
+            <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
+                <h3 class="font-semibold text-gray-900 mb-3">Método de Pago</h3>
+                <select @bind="metodoPago"
+                        class="w-full bg-white border border-gray-300 text-gray-900 px-3 py-2 rounded-lg
+                               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="EFECTIVO">💵 Efectivo</option>
+                    <option value="TARJETA">💳 Tarjeta</option>
+                    <option value="TRANSFERENCIA">🏦 Transferencia</option>
+                </select>
+            </div>
+
+           
+            <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
+                <div class="space-y-3">
+                    <div class="flex justify-between text-gray-700">
+                        <span>Subtotal</span>
+                        <span>$@GetSubtotal().ToString("F2")</span>
+                    </div>
+                    <div class="flex justify-between text-gray-700">
+                        <span>Descuento</span>
+                        <span class="text-red-600">-$@GetTotalDiscount().ToString("F2")</span>
+                    </div>
+                    <hr class="border-gray-200">
+                    <div class="flex justify-between text-xl font-bold text-gray-900">
+                        <span>Total</span>
+                        <span>$@GetTotal().ToString("F2")</span>
+                    </div>
+                </div>
+            </div>
+
+           
+            <button @onclick="AddVenta"
+                    class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed
+                           text-white font-bold py-4 rounded-lg transition-colors shadow-lg hover:shadow-xl
+                           @(!lines.Any() ? "opacity-50 cursor-not-allowed" : "")"
+                    disabled="@(!lines.Any() || isProcessing)">
+                @if (isProcessing)
+                {
+                    <span>⏳ Procesando...</span>
+                }
+                else if (lines.Any())
+                {
+                    <span>💳 Procesar Venta</span>
+                }
+                else
+                {
+                    <span>Agregar productos al carrito</span>
+                }
+            </button>
+
+           
+            @if (showVentaResult)
+            {
+                <div class="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <div class="flex items-center mb-3">
+                        <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-3">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-green-800">¡Venta Creada Exitosamente!</h3>
+                    </div>
+                    <div class="text-sm text-green-700 space-y-2 mb-4">
+                        <p><strong>Número de Orden:</strong> @lastCreatedOrder</p>
+                        <p><strong>Total:</strong> $@lastCreatedTotal.ToString("F2")</p>
+                        <p><strong>Método de Pago:</strong> @lastCreatedPayment</p>
+                    </div>
+                    <button @onclick="ResetPOS"
+                            class="w-full bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-lg transition-colors">
+                        🔄 Nueva Venta
+                    </button>
+                </div>
+            }
+
+       
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <div class="flex items-center mb-2">
+                        <div class="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center mr-2">
+                            <span class="text-white text-sm">!</span>
+                        </div>
+                        <h4 class="font-medium text-red-800">Error</h4>
+                    </div>
+                    <p class="text-sm text-red-700">@errorMessage</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+
+    private List<CatalogoCategorias> categories = [];
+    private List<Producto> productos = [];
+    private List<Cliente> clientes = [];
+
+    private CatalogoCategorias? selectedCategory;
+    private string searchTerm = "";
+    private List<Producto> filteredProducts = new();
+    private List<DetalleVenta> lines = new();
+    private string metodoPago = "EFECTIVO";
+    private int? selectedClienteId;
+
+    private bool showVentaResult = false;
+    private bool isProcessing = false;
+    private string errorMessage = "";
+    private string lastCreatedOrder = "";
+    private decimal lastCreatedTotal = 0;
+    private string lastCreatedPayment = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            using var context = DbFactory.CreateDbContext();
+            categories = await context.CatalogoCategorias.ToListAsync();
+            productos = await context.Producto
+                .Include(p => p.Stock)
+                .Where(p => p.Activo)
+                .ToListAsync();
+            clientes = await context.Cliente.ToListAsync();
+            FilterProducts();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error al cargar datos: {ex.Message}";
+        }
+        StateHasChanged();
+    }
+
+    private void SelectCategory(CatalogoCategorias? category)
+    {
+        selectedCategory = category;
+        FilterProducts();
+        StateHasChanged();
+    }
+
+    private void OnSearchInput(ChangeEventArgs e)
+    {
+        searchTerm = e.Value?.ToString() ?? "";
+        FilterProducts();
+        StateHasChanged();
+    }
+
+    private void FilterProducts()
+    {
+        filteredProducts = productos
+            .Where(p =>
+                (selectedCategory == null || p.CategoriaId == selectedCategory.id) &&
+                (string.IsNullOrWhiteSpace(searchTerm) || p.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+            )
+            .ToList();
+    }
+
+    private decimal GetPromoPrice(Producto product)
+    {
+        
+        return product.Precio * 0.9m;
+    }
+
+    private void AddToCart(Producto product)
+    {
+        if ((product.Stock?.CantidadDisponible ?? 0) <= 0) return;
+
+        var existingItem = lines.FirstOrDefault(c => c.ProductoId == product.Id);
+        if (existingItem != null)
+        {
+            if (existingItem.CantidadSolicitada < (product.Stock?.CantidadDisponible ?? 0))
+            {
+                existingItem.CantidadSolicitada++;
+                RecalculateLineTotal(existingItem);
+            }
+        }
+        else
+        {
+            var newItem = new DetalleVenta
+            {
+                ProductoId = product.Id,
+                Producto = product,
+                PrecioUnitario = product.Promocion ? GetPromoPrice(product) : product.Precio,
+                CantidadSolicitada = 1,
+                DescuentoLinea = 0
+            };
+            RecalculateLineTotal(newItem);
+            lines.Add(newItem);
+        }
+        ClearError();
+        StateHasChanged();
+    }
+
+    private void RecalculateLineTotal(DetalleVenta item)
+    {
+        item.TotalLinea = (item.PrecioUnitario * item.CantidadSolicitada) - item.DescuentoLinea;
+    }
+
+    private void IncreaseQuantity(int productId)
+    {
+        var item = lines.FirstOrDefault(c => c.ProductoId == productId);
+        var product = productos.FirstOrDefault(p => p.Id == productId);
+
+        if (item != null && product != null && item.CantidadSolicitada < (product.Stock?.CantidadDisponible ?? 0))
+        {
+            item.CantidadSolicitada++;
+            RecalculateLineTotal(item);
+            StateHasChanged();
+        }
+    }
+
+    private void DecreaseQuantity(int productId)
+    {
+        var item = lines.FirstOrDefault(c => c.ProductoId == productId);
+        if (item != null)
+        {
+            if (item.CantidadSolicitada > 1)
+            {
+                item.CantidadSolicitada--;
+                RecalculateLineTotal(item);
+            }
+            else
+            {
+                lines.Remove(item);
+            }
+            StateHasChanged();
+        }
+    }
+
+    private void AddNotes(int productId)
+    {
+        var item = lines.FirstOrDefault(c => c.ProductoId == productId);
+        if (item != null)
+        {
+           
+            item.Notas = "Nota personalizada - " + DateTime.Now.ToString("HH:mm");
+            StateHasChanged();
+        }
+    }
+
+    private decimal GetSubtotal()
+    {
+        return lines.Sum(item => item.PrecioUnitario * item.CantidadSolicitada);
+    }
+
+    private decimal GetTotalDiscount()
+    {
+        return lines.Sum(item => item.DescuentoLinea);
+    }
+
+    private decimal GetTotal()
+    {
+        return GetSubtotal() - GetTotalDiscount();
+    }
+
+    private async Task AddVenta()
+    {
+        if (isProcessing) return;
+
+        ClearError();
+        isProcessing = true;
+        StateHasChanged();
+
+        try
+        {
+            if (!lines.Any())
+            {
+                errorMessage = "El carrito está vacío";
+                return;
+            }
+
+            using var context = DbFactory.CreateDbContext();
+
+            
+            var orderNumber = $"V-{DateTime.Now:yyyyMMdd}-{DateTime.Now.Ticks.ToString().Substring(12)}";
+
+
+            var venta = new Venta
+            {
+                ClienteId = selectedClienteId,
+                NumeroOrden = orderNumber,
+                FechaVenta = DateTime.Now,
+                MontoSubtotal = GetSubtotal(),
+                MontoDescuento = GetTotalDiscount(),
+                MontoTotal = GetTotal(),
+                MetodoPago = metodoPago,
+                EstatusVenta = "COMPLETADA",
+                EstatusEntrega = "PENDIENTE",
+                FechaEntrega = DateTime.Now.AddDays(1), 
+                EntregadoPor = "Sistema", 
+                Items = new List<DetalleVenta>()
+            };
+
+          
+            foreach (var line in lines)
+            {
+                var detalleVenta = new DetalleVenta
+                {
+                    ProductoId = line.ProductoId,
+                    CantidadSolicitada = line.CantidadSolicitada,
+                    CantidadEntregada = 0,
+                    PrecioUnitario = line.PrecioUnitario,
+                    TotalLinea = line.TotalLinea,
+                    DescuentoLinea = line.DescuentoLinea,
+                    EstatusEntrega = "PENDIENTE",
+                    Notas = line.Notas
+                };
+                venta.Items.Add(detalleVenta);
+            }
+
+            context.Venta.Add(venta);
+            await context.SaveChangesAsync();
+
+           
+            lastCreatedOrder = orderNumber;
+            lastCreatedTotal = venta.MontoTotal;
+            lastCreatedPayment = metodoPago;
+            showVentaResult = true;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error al crear la venta: {ex.Message}";
+        }
+        finally
+        {
+            isProcessing = false;
+            StateHasChanged();
+        }
+    }
+
+    private void ResetPOS()
+    {
+        lines.Clear();
+        metodoPago = "EFECTIVO";
+        selectedClienteId = null;
+        showVentaResult = false;
+        ClearError();
+        lastCreatedOrder = "";
+        lastCreatedTotal = 0;
+        lastCreatedPayment = "";
+        StateHasChanged();
+    }
+
+    private void ClearError()
+    {
+        errorMessage = "";
+    }
+}

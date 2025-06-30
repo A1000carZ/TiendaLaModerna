@@ -28,9 +28,14 @@ else
                     <ValidationMessage For="() => Producto.Name" class="text-danger" />
                 </div>
                 <div class="mb-3">
-                    <label for="categoriaid" class="form-label">CategoriaId:</label>
-                    <InputNumber id="categoriaid" @bind-Value="Producto.CategoriaId" class="form-control" />
-                    <ValidationMessage For="() => Producto.CategoriaId" class="text-danger" />
+                    <label for="categoriaid" class="form-label">Categoria:</label>
+                    <InputSelect id="categoriaid" @bind-Value="Producto.CategoriaId" class="form-select">
+                        <option value="">Seleccione una categoría</option>
+                        @foreach (var categoria in categorias)
+                        {
+                            <option value="@categoria.id">@categoria.nombre</option>
+                        }
+                    </InputSelect>
                 </div>
                 <div class="mb-3">
                     <label for="precio" class="form-label">Precio:</label>
@@ -47,16 +52,7 @@ else
                     <InputText id="img" @bind-Value="Producto.Img" class="form-control" />
                     <ValidationMessage For="() => Producto.Img" class="text-danger" />
                 </div>
-                <div class="mb-3">
-                    <label for="promocion" class="form-label">Promocion:</label>
-                    <InputCheckbox id="promocion" @bind-Value="Producto.Promocion" class="form-check-input" />
-                    <ValidationMessage For="() => Producto.Promocion" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="agotado" class="form-label">Agotado:</label>
-                    <InputCheckbox id="agotado" @bind-Value="Producto.Agotado" class="form-check-input" />
-                    <ValidationMessage For="() => Producto.Agotado" class="text-danger" />
-                </div>
+                
                 <div class="mb-3">
                     <label for="umbralinventario" class="form-label">UmbralInventario:</label>
                     <InputNumber id="umbralinventario" @bind-Value="Producto.UmbralInventario" class="form-control" />
@@ -88,6 +84,7 @@ else
 </div>
 
 @code {
+    private List<CatalogoCategorias> categorias = [];
     [SupplyParameterFromQuery]
     private int Id { get; set; }
 
@@ -98,6 +95,7 @@ else
     {
         using var context = DbFactory.CreateDbContext();
         Producto ??= await context.Producto.FirstOrDefaultAsync(m => m.Id == Id);
+        categorias = await context.CatalogoCategorias.ToListAsync();
 
         if (Producto is null)
         {

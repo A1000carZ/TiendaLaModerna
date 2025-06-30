@@ -1,0 +1,124 @@
+﻿@page "/inventario/create"
+@rendermode InteractiveServer
+@using Microsoft.EntityFrameworkCore
+@using TiendaLaModerna.Components.Models.Catalogo
+@using TiendaLaModerna.Components.Models.Inventario
+@inject IDbContextFactory<TiendaLaModerna.Data.TiendaLaModernaContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>MovimientoInventario</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="MovimientoInventario" OnValidSubmit="AddMovimientoInventario" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert" />
+            <div class="mb-3">
+                <label for="producto" class="form-label">Producto</label>
+                <InputSelect id="producto" class="form-select" @bind-Value="productoSeleccionadoId" aria-required="true">
+                    <option value="">Seleccione un producto</option>
+                    @foreach (var producto in productos)
+                    {
+                        <option value="@producto.Id">@producto.Name</option>
+                    }
+                </InputSelect>
+            </div>
+            @if (productoSeleccionado != null && productoSeleccionado.RequiereVencimiento)
+            {
+                <div class="mb-3">
+                    <label for="lote" class="form-label">Lote</label>
+                    <InputSelect id="lote" class="form-select" @bind-Value="loteSeleccionadoId" aria-required="true">
+                        <option value="">Seleccione un lote</option>
+                        @foreach (var lote in productoSeleccionado.Lotes)
+                        {
+                            <option value="@lote.Id">@lote.NumeroLote - Vencimiento: @lote.FechaVencimiento.ToString("MMMM d, yyyy") - Disponibles @lote.CantidadRestante</option>
+                        }
+                    </InputSelect>
+                </div>
+            }
+
+            <div class="mb-3">
+                <label for="tipomovimiento" class="form-label">TipoMovimiento:</label>
+                <InputText id="tipomovimiento" @bind-Value="MovimientoInventario.TipoMovimiento" class="form-control" aria-required="true" />
+                <ValidationMessage For="() => MovimientoInventario.TipoMovimiento" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="cantidad" class="form-label">Cantidad:</label>
+                <InputNumber id="cantidad" @bind-Value="MovimientoInventario.Cantidad" class="form-control" />
+                <ValidationMessage For="() => MovimientoInventario.Cantidad" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="tiporeferencia" class="form-label">TipoReferencia:</label>
+                <InputText id="tiporeferencia" @bind-Value="MovimientoInventario.TipoReferencia" class="form-control" />
+                <ValidationMessage For="() => MovimientoInventario.TipoReferencia" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="referencia" class="form-label">Referencia:</label>
+                <InputNumber id="referencia" @bind-Value="MovimientoInventario.Referencia" class="form-control" />
+                <ValidationMessage For="() => MovimientoInventario.Referencia" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="notas" class="form-label">Notas:</label>
+                <InputText id="notas" @bind-Value="MovimientoInventario.Notas" class="form-control" aria-required="true" />
+                <ValidationMessage For="() => MovimientoInventario.Notas" class="text-danger" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/movimientoinventarios">Back to List</a>
+</div>
+
+@code {
+    List<Producto> productos = [];
+
+    // Changed to use IDs instead of objects
+    private int? productoSeleccionadoId;
+    private int? loteSeleccionadoId;
+
+    // Computed property to get the selected product
+    private Producto? productoSeleccionado =>
+        productoSeleccionadoId.HasValue ? productos.FirstOrDefault(p => p.Id == productoSeleccionadoId.Value) : null;
+
+    [SupplyParameterFromForm]
+    private MovimientoInventario MovimientoInventario { get; set; } = new()
+    {
+        TipoMovimiento = "Entrada",
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        productos = await context.Producto.Include(p => p.Lotes.Where(l=>l.Activo || l.CantidadRestante > 0)).ToListAsync();
+        MovimientoInventario.FechaMovimiento = DateTime.Now;
+    }
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddMovimientoInventario()
+    {
+        using var context = DbFactory.CreateDbContext();
+        MovimientoInventario.FechaMovimiento = DateTime.Now;
+
+        if (productoSeleccionadoId.HasValue)
+        {
+            MovimientoInventario.ProductoId = productoSeleccionadoId.Value;
+
+            var producto = productos.FirstOrDefault(p => p.Id == productoSeleccionadoId.Value);
+            if (producto != null && producto.RequiereVencimiento && loteSeleccionadoId.HasValue)
+            {
+                MovimientoInventario.LoteId = loteSeleccionadoId.Value;
+            }
+        }
+
+        context.MovimientoInventario.Add(MovimientoInventario);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/movimientoinventarios");
+    }
+}

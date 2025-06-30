@@ -1,0 +1,134 @@
+﻿@page "/venta/edit"
+@using Microsoft.EntityFrameworkCore
+@using TiendaLaModerna.Components.Models.Venta
+@inject IDbContextFactory<TiendaLaModerna.Data.TiendaLaModernaContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Venta</h2>
+<hr />
+@if (Venta is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Venta" OnValidSubmit="UpdateVenta" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="Venta.Id" value="@Venta.Id" />
+                <div class="mb-3">
+                    <label for="clienteid" class="form-label">ClienteId:</label>
+                    <InputNumber id="clienteid" @bind-Value="Venta.ClienteId" class="form-control" />
+                    <ValidationMessage For="() => Venta.ClienteId" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="numeroorden" class="form-label">NumeroOrden:</label>
+                    <InputText id="numeroorden" @bind-Value="Venta.NumeroOrden" class="form-control" aria-required="true"/>
+                    <ValidationMessage For="() => Venta.NumeroOrden" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="fechaventa" class="form-label">FechaVenta:</label>
+                    <InputDate id="fechaventa" @bind-Value="Venta.FechaVenta" class="form-control" />
+                    <ValidationMessage For="() => Venta.FechaVenta" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="montototal" class="form-label">MontoTotal:</label>
+                    <InputNumber id="montototal" @bind-Value="Venta.MontoTotal" class="form-control" />
+                    <ValidationMessage For="() => Venta.MontoTotal" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="metodopago" class="form-label">MetodoPago:</label>
+                    <InputText id="metodopago" @bind-Value="Venta.MetodoPago" class="form-control" aria-required="true"/>
+                    <ValidationMessage For="() => Venta.MetodoPago" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="estatusventa" class="form-label">EstatusVenta:</label>
+                    <InputText id="estatusventa" @bind-Value="Venta.EstatusVenta" class="form-control" aria-required="true"/>
+                    <ValidationMessage For="() => Venta.EstatusVenta" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="estatusentrega" class="form-label">EstatusEntrega:</label>
+                    <InputText id="estatusentrega" @bind-Value="Venta.EstatusEntrega" class="form-control" aria-required="true"/>
+                    <ValidationMessage For="() => Venta.EstatusEntrega" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="fechaentrega" class="form-label">FechaEntrega:</label>
+                    <InputDate id="fechaentrega" @bind-Value="Venta.FechaEntrega" class="form-control" />
+                    <ValidationMessage For="() => Venta.FechaEntrega" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="notas" class="form-label">Notas:</label>
+                    <InputText id="notas" @bind-Value="Venta.Notas" class="form-control" />
+                    <ValidationMessage For="() => Venta.Notas" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="entregadopor" class="form-label">EntregadoPor:</label>
+                    <InputText id="entregadopor" @bind-Value="Venta.EntregadoPor" class="form-control" aria-required="true"/>
+                    <ValidationMessage For="() => Venta.EntregadoPor" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/venta">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private Venta? Venta { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Venta ??= await context.Venta.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (Venta is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateVenta()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Venta!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!VentaExists(Venta!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/venta");
+    }
+
+    private bool VentaExists(int id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Venta.Any(e => e.Id == id);
+    }
+}

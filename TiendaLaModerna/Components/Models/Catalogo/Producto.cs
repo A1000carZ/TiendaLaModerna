@@ -42,5 +42,7 @@ namespace TiendaLaModerna.Components.Models.Catalogo
 
         public virtual StockProducto? Stock { get; set; }
 
+        public virtual ICollection<LotesStock> Lotes { get; set; } = new List<LotesStock>();
+
     }
 }

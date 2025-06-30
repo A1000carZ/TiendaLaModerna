@@ -1,0 +1,124 @@
+﻿@page "/inventario/edit"
+@using Microsoft.EntityFrameworkCore
+@using TiendaLaModerna.Components.Models.Inventario
+@inject IDbContextFactory<TiendaLaModerna.Data.TiendaLaModernaContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>MovimientoInventario</h2>
+<hr />
+@if (MovimientoInventario is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="MovimientoInventario" OnValidSubmit="UpdateMovimientoInventario" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="MovimientoInventario.Id" value="@MovimientoInventario.Id" />
+                <div class="mb-3">
+                    <label for="productoid" class="form-label">ProductoId:</label>
+                    <InputNumber id="productoid" @bind-Value="MovimientoInventario.ProductoId" class="form-control" />
+                    <ValidationMessage For="() => MovimientoInventario.ProductoId" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="loteid" class="form-label">LoteId:</label>
+                    <InputNumber id="loteid" @bind-Value="MovimientoInventario.LoteId" class="form-control" />
+                    <ValidationMessage For="() => MovimientoInventario.LoteId" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="tipomovimiento" class="form-label">TipoMovimiento:</label>
+                    <InputText id="tipomovimiento" @bind-Value="MovimientoInventario.TipoMovimiento" class="form-control" aria-required="true"/>
+                    <ValidationMessage For="() => MovimientoInventario.TipoMovimiento" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="cantidad" class="form-label">Cantidad:</label>
+                    <InputNumber id="cantidad" @bind-Value="MovimientoInventario.Cantidad" class="form-control" />
+                    <ValidationMessage For="() => MovimientoInventario.Cantidad" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="tiporeferencia" class="form-label">TipoReferencia:</label>
+                    <InputText id="tiporeferencia" @bind-Value="MovimientoInventario.TipoReferencia" class="form-control" />
+                    <ValidationMessage For="() => MovimientoInventario.TipoReferencia" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="referencia" class="form-label">Referencia:</label>
+                    <InputNumber id="referencia" @bind-Value="MovimientoInventario.Referencia" class="form-control" />
+                    <ValidationMessage For="() => MovimientoInventario.Referencia" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="notas" class="form-label">Notas:</label>
+                    <InputText id="notas" @bind-Value="MovimientoInventario.Notas" class="form-control" aria-required="true"/>
+                    <ValidationMessage For="() => MovimientoInventario.Notas" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="fechamovimiento" class="form-label">FechaMovimiento:</label>
+                    <InputDate id="fechamovimiento" @bind-Value="MovimientoInventario.FechaMovimiento" class="form-control" />
+                    <ValidationMessage For="() => MovimientoInventario.FechaMovimiento" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/movimientoinventarios">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int? Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private MovimientoInventario? MovimientoInventario { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        MovimientoInventario ??= await context.MovimientoInventario.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (MovimientoInventario is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateMovimientoInventario()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(MovimientoInventario!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!MovimientoInventarioExists(MovimientoInventario!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/inventario");
+    }
+
+    private bool MovimientoInventarioExists(int? id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.MovimientoInventario.Any(e => e.Id == id);
+    }
+}
