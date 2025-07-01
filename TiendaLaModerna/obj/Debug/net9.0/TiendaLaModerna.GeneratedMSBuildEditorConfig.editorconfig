@@ -1,11 +1,19 @@
 is_global = true
 build_property.TargetFramework = net9.0
+build_property.TargetFramework = net9.0
+build_property.TargetPlatformMinVersion = 
 build_property.TargetPlatformMinVersion = 
 build_property.UsingMicrosoftNETSdkWeb = true
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
 build_property.ProjectTypeGuids = 
 build_property.InvariantGlobalization = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
 build_property.PlatformNeutralAssembly = 
 build_property.EnforceExtendedAnalyzerRules = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = TiendaLaModerna
 build_property.RootNamespace = TiendaLaModerna
@@ -24,38 +32,156 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9BcHAucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-<<<<<<< HEAD
-[C:/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Layout/Sidebar.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcU2lkZWJhci5yYXpvcg==
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Layout/StatusChip.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9MYXlvdXQvU3RhdHVzQ2hpcC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/Counter.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDb3VudGVyLnJhem9y
-=======
-[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/Counter.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Db3VudGVyLnJhem9y
->>>>>>> b6612868794b2744998272b8efa38e0d2f2b6ffd
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/Catalogo/CatalogoCategoriasPages/Create.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9DYXRhbG9nby9DYXRhbG9nb0NhdGVnb3JpYXNQYWdlcy9DcmVhdGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/Catalogo/CatalogoCategoriasPages/Delete.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9DYXRhbG9nby9DYXRhbG9nb0NhdGVnb3JpYXNQYWdlcy9EZWxldGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/Catalogo/CatalogoCategoriasPages/Details.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9DYXRhbG9nby9DYXRhbG9nb0NhdGVnb3JpYXNQYWdlcy9EZXRhaWxzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/Catalogo/CatalogoCategoriasPages/Edit.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9DYXRhbG9nby9DYXRhbG9nb0NhdGVnb3JpYXNQYWdlcy9FZGl0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/Catalogo/CatalogoCategoriasPages/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9DYXRhbG9nby9DYXRhbG9nb0NhdGVnb3JpYXNQYWdlcy9JbmRleC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/ClientePages/Create.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9DbGllbnRlUGFnZXMvQ3JlYXRlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/ClientePages/Delete.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9DbGllbnRlUGFnZXMvRGVsZXRlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/ClientePages/Details.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9DbGllbnRlUGFnZXMvRGV0YWlscy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/ClientePages/Edit.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9DbGllbnRlUGFnZXMvRWRpdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/ClientePages/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9DbGllbnRlUGFnZXMvSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/CorteCajaPages/Create.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Db3J0ZUNhamFQYWdlcy9DcmVhdGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/CorteCajaPages/Details.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Db3J0ZUNhamFQYWdlcy9EZXRhaWxzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/Error.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9FcnJvci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/Home.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Ib21lLnJhem9y
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9JbmRleC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-<<<<<<< HEAD
-[C:/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/Productos.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xQcm9kdWN0b3MucmF6b3I=
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/InventarioPages/Create.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9JbnZlbnRhcmlvUGFnZXMvQ3JlYXRlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/Weather.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xXZWF0aGVyLnJhem9y
-=======
-[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/Weather.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9XZWF0aGVyLnJhem9y
->>>>>>> b6612868794b2744998272b8efa38e0d2f2b6ffd
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/InventarioPages/Delete.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9JbnZlbnRhcmlvUGFnZXMvRGVsZXRlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/InventarioPages/Details.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9JbnZlbnRhcmlvUGFnZXMvRGV0YWlscy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/InventarioPages/Edit.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9JbnZlbnRhcmlvUGFnZXMvRWRpdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/InventarioPages/Historial.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9JbnZlbnRhcmlvUGFnZXMvSGlzdG9yaWFsLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/InventarioPages/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9JbnZlbnRhcmlvUGFnZXMvSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/NotificacionPages/Details.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Ob3RpZmljYWNpb25QYWdlcy9EZXRhaWxzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/NotificacionPages/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Ob3RpZmljYWNpb25QYWdlcy9JbmRleC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/ProductoPages/Create.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Qcm9kdWN0b1BhZ2VzL0NyZWF0ZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/ProductoPages/Delete.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Qcm9kdWN0b1BhZ2VzL0RlbGV0ZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/ProductoPages/Details.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Qcm9kdWN0b1BhZ2VzL0RldGFpbHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/ProductoPages/Edit.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Qcm9kdWN0b1BhZ2VzL0VkaXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/ProductoPages/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Qcm9kdWN0b1BhZ2VzL0luZGV4LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/ProveedorPages/Create.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Qcm92ZWVkb3JQYWdlcy9DcmVhdGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/ProveedorPages/Delete.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Qcm92ZWVkb3JQYWdlcy9EZWxldGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/ProveedorPages/Details.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Qcm92ZWVkb3JQYWdlcy9EZXRhaWxzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/ProveedorPages/Edit.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Qcm92ZWVkb3JQYWdlcy9FZGl0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/ProveedorPages/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Qcm92ZWVkb3JQYWdlcy9JbmRleC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/VentaPages/Create.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9WZW50YVBhZ2VzL0NyZWF0ZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/VentaPages/Delete.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9WZW50YVBhZ2VzL0RlbGV0ZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/VentaPages/Details.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9WZW50YVBhZ2VzL0RldGFpbHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/VentaPages/Edit.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9WZW50YVBhZ2VzL0VkaXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Pages/VentaPages/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9WZW50YVBhZ2VzL0luZGV4LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/a1000carz/Documents/TiendaLaModerna/TiendaLaModerna/Components/Routes.razor]
