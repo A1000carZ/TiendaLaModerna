@@ -20,7 +20,7 @@ builder.Services.AddQuickGridEntityFrameworkAdapter();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-// Add services to the container.
+
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
@@ -40,12 +40,13 @@ builder.Services.AddCors(builder =>
 
 builder.Services.AddSysinfocus(false);
 builder.Services.AddScoped<IFlowbiteService, FlowbiteService>();
+builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<CategoriaRepositorio>();
 builder.Services.AddScoped<ProductoRepositorio>();
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        // Configurar JSON para mejor formato
+        
         options.JsonSerializerOptions.WriteIndented = true;
         options.JsonSerializerOptions.PropertyNamingPolicy = null;
     });
@@ -67,11 +68,10 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
     app.UseMigrationsEndPoint();
 }
@@ -81,7 +81,7 @@ else
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Tienda La Moderna API V1");
-        c.RoutePrefix = "swagger"; // Esto hace que Swagger est� en /swagger
+        c.RoutePrefix = "swagger";
     });
     app.UseMigrationsEndPoint();
 

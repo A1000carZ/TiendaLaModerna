@@ -135,7 +135,7 @@
         
     }
 
-    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+   
     private async Task AddMovimientoInventario()
     {
         using var context = DbFactory.CreateDbContext();
@@ -200,11 +200,11 @@
         await context.SaveChangesAsync();
         int generatedLoteId = LotesStock.Id;
 
-        // Create another object using the generated ID
+       
         var movimientoInventario = new MovimientoInventario
         {
             ProductoId = productoSeleccionado.Id,
-            LoteId = generatedLoteId, // Use the generated ID
+            LoteId = generatedLoteId, 
             TipoMovimiento = "ENTRADA",
             TipoReferencia = "COMPRA",
             Cantidad = LotesStock.CantidadRecibida,
@@ -212,10 +212,10 @@
             Notas = $"Entrada automática del lote {LotesStock.NumeroLote}"
         };
 
-        // Add the movement to context
+        
         context.MovimientoInventario.Add(movimientoInventario);
 
-        // Save the movement
+        
         await context.SaveChangesAsync();
 
         

@@ -6,6 +6,10 @@
 @inject IDbContextFactory<TiendaLaModerna.Data.TiendaLaModernaContext> DbFactory
 @inject NavigationManager NavigationManager
 @using System.ComponentModel.DataAnnotations
+@using Microsoft.JSInterop
+@using TiendaLaModerna.Services
+@inject IJSRuntime JS  
+@inject ITicketService TicketService
 
 <PageTitle>Crear Venta</PageTitle>
 
@@ -532,11 +536,75 @@
             context.Venta.Add(venta);
             await context.SaveChangesAsync();
 
-           
+            var detallesEntrega = new List<DetalleEntrega>();
+
+            foreach (var item in venta.Items)
+            {
+                
+                var producto = await context.Producto
+                    .Include(p => p.Lotes.Where(l => l.CantidadRestante > 0))
+                    .FirstOrDefaultAsync(p => p.Id == item.ProductoId);
+
+                if (producto == null) continue;
+
+                var detalleEntrega = new DetalleEntrega
+                {
+                    DetalleVentaId = item.Id,
+                    CantidadEntregada = item.CantidadSolicitada, 
+                    FuenteEntrega = producto.RequiereVencimiento ? "LOTE" : "PRODUCTO",
+                    Notas = "Entrega automática"
+                };
+
+                
+                if (producto.RequiereVencimiento)
+                {
+                    var loteDisponible = producto.Lotes
+                        .Where(l => l.CantidadRestante >= item.CantidadSolicitada)
+                        .OrderBy(l => l.FechaVencimiento) 
+                        .FirstOrDefault();
+
+                    if (loteDisponible != null)
+                    {
+                        detalleEntrega.LoteId = loteDisponible.Id;
+                      
+                    }
+                    else
+                    {
+                        
+                        detalleEntrega.CantidadEntregada = 0;
+                        detalleEntrega.Notas = "Stock insuficiente en lotes disponibles";
+                       
+                        continue;
+                    }
+                }
+
+                detallesEntrega.Add(detalleEntrega);
+            }
+            if (detallesEntrega.Any())
+            {
+                context.DetalleEntrega.AddRange(detallesEntrega);
+               
+
+
+                await context.SaveChangesAsync();
+            }
             lastCreatedOrder = orderNumber;
             lastCreatedTotal = venta.MontoTotal;
             lastCreatedPayment = metodoPago;
             showVentaResult = true;
+            
+            try
+            {
+                var html = TicketService.GenerateReceiptHtml(venta);
+               
+
+                await JS.InvokeVoidAsync("printReceipt", html);
+            }
+            catch (Exception ex)
+            {
+
+                await JS.InvokeVoidAsync("alert", $"Error al generar PDF: {ex.Message}");
+            }
         }
         catch (Exception ex)
         {
@@ -548,6 +616,7 @@
             StateHasChanged();
         }
     }
+
 
     private void ResetPOS()
     {
