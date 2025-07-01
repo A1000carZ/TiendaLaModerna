@@ -1,0 +1,151 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using TiendaLaModerna.Components.Models.Venta
+@using TiendaLaModerna.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<TiendaLaModernaContext> DbFactory
+
+<PageTitle>Corte de Caja y Ventas</PageTitle>
+
+<h1 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Resumen Diario</h1>
+
+<div class="flex flex-col lg:flex-row gap-6">
+    <div class="flex-1">
+        <h2 class="text-xl font-semibold text-gray-700 dark:text-white mb-2">Corte de Caja</h2>
+        <p class="mb-4">
+            <a href="cortecajas/create" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded shadow">
+                Crear Nuevo Corte
+            </a>
+        </p>
+
+        <div class="overflow-x-auto shadow-md sm:rounded-lg border border-gray-200 dark:border-gray-700">
+            @if (corteCajaItems is not null)
+            {
+                <QuickGrid TGridItem="CorteCaja" Items="corteCajaItems.AsQueryable()" class="min-w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <PropertyColumn Property="c => c.Fecha" Title="Fecha" />
+                    <PropertyColumn Property="c => c.SaldoInicial" Title="Saldo Inicial" />
+                    <PropertyColumn Property="c => c.TotalVentas" Title="Total Ventas" />
+                    <PropertyColumn Property="c => c.EfectivoRecibido" Title="Efectivo Recibido" />
+                    <PropertyColumn Property="c => c.SaldoFinal" Title="Saldo Final" />
+                    <PropertyColumn Property="c => c.Notas" Title="Notas" />
+                    <PropertyColumn Property="c => c.CerradoPor" Title="Cerrado Por" />
+                    <PropertyColumn Property="c => c.FechaCierre" Title="Fecha Cierre" />
+
+                    <TemplateColumn Title="Acciones" Context="corte">
+                        <a class="text-blue-600 dark:text-blue-400 hover:underline" href="@($"cortecajas/details?id={corte.Id}")">
+                            Detalles
+                        </a>
+                    </TemplateColumn>
+                </QuickGrid>
+            }
+            else
+            {
+                <p>Cargando corte de caja...</p>
+            }
+        </div>
+    </div>
+
+    <div class="flex-1">
+        <h2 class="text-xl font-semibold text-gray-700 dark:text-white mb-2">Reporte de Ventas</h2>
+
+        <div class="mb-4 flex flex-wrap items-center gap-4">
+            <label class="font-medium text-gray-700 dark:text-gray-300">
+                Modo:
+                <select @bind="modo" class="ml-2 p-1 border rounded">
+                    <option value="SEMANA">Semana Actual</option>
+                    <option value="RANGO">Rango Fechas</option>
+                </select>
+            </label>
+
+            @if (modo == "RANGO")
+            {
+                <label class="font-medium text-gray-700 dark:text-gray-300">
+                    Desde:
+                    <InputDate @bind-Value="fechaInicio" class="ml-2 p-1 border rounded" />
+                </label>
+                <label class="font-medium text-gray-700 dark:text-gray-300">
+                    Hasta:
+                    <InputDate @bind-Value="fechaFin" class="ml-2 p-1 border rounded" />
+                </label>
+            }
+
+            <button @onclick="ActualizarReporte" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded shadow">
+                Consultar
+            </button>
+        </div>
+
+        <div class="overflow-x-auto shadow-md sm:rounded-lg border border-gray-200 dark:border-gray-700">
+            @if (ventas is not null)
+            {
+                <QuickGrid TGridItem="ReporteVentas" Items="ventas.AsQueryable()" class="min-w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <PropertyColumn Property="v => v.Fecha" Title="Fecha" />
+                    <PropertyColumn Property="v => v.TotalVentas" Title="Total Ventas" />
+                    <PropertyColumn Property="v => v.IngresosTotales" Title="Ingresos Totales" />
+                    <PropertyColumn Property="v => v.TotalEfectivo" Title="Total Efectivo" />
+                </QuickGrid>
+            }
+            else
+            {
+                <p>Cargando ventas...</p>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<CorteCaja>? corteCajaItems;
+    private List<ReporteVentas> ventas = new();
+
+    private string modo = "SEMANA";
+    private DateTime fechaInicio = DateTime.Today.AddDays(-7);
+    private DateTime fechaFin = DateTime.Today;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCorteCajaAsync();
+        await CargarVentasAsync();
+    }
+
+    private async Task LoadCorteCajaAsync()
+    {
+        // Create a new context for this operation
+        using var context = DbFactory.CreateDbContext();
+        corteCajaItems = await context.CorteCaja.ToListAsync(); // Use ToListAsync() to fetch data
+    }
+
+    private async Task CargarVentasAsync()
+    {
+        // Create a new context for this operation
+        using var context = DbFactory.CreateDbContext();
+
+        if (modo == "SEMANA")
+        {
+            ventas = await context.Set<ReporteVentas>()
+                .FromSqlRaw("EXEC sp_ReporteVentasResumen @modo = {0}", modo)
+                .ToListAsync();
+        }
+        else if (modo == "RANGO")
+        {
+            ventas = await context.Set<ReporteVentas>()
+                .FromSqlRaw("EXEC sp_ReporteVentasResumen @modo = {0}, @fecha_inicio = {1}, @fecha_fin = {2}", modo, fechaInicio, fechaFin)
+                .ToListAsync();
+        }
+    }
+
+    private async Task ActualizarReporte()
+    {
+        await CargarVentasAsync();
+    }
+
+    // DisposeAsync is no longer strictly necessary for 'context' as it's now created and disposed per-operation
+    // However, it's good practice to keep it if you foresee other disposable resources.
+    // For DbContext created with 'using var', the disposal is handled automatically.
+    public ValueTask DisposeAsync()
+    {
+        // No explicit disposal needed here for DbContext instances created with 'using var'
+        return ValueTask.CompletedTask;
+    }
+}
+

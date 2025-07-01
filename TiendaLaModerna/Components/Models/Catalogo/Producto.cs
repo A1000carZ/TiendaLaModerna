@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using TiendaLaModerna.Components.Models.Inventario;
+using TiendaLaModerna.Components.Models.Notificacion;
 
 namespace TiendaLaModerna.Components.Models.Catalogo
 {
@@ -43,6 +44,8 @@ namespace TiendaLaModerna.Components.Models.Catalogo
         public virtual StockProducto? Stock { get; set; }
 
         public virtual ICollection<LotesStock> Lotes { get; set; } = new List<LotesStock>();
+        public virtual ICollection<Notificaciones> Notificaciones { get; set; } = new List<Notificaciones>();
+
 
     }
 }

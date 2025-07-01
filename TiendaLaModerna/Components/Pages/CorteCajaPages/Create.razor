@@ -1,0 +1,75 @@
+﻿@page "/cortecajas/create"
+@using Microsoft.EntityFrameworkCore
+@using TiendaLaModerna.Components.Models.Venta
+@inject IDbContextFactory<TiendaLaModerna.Data.TiendaLaModernaContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h3>Crear Corte de Caja</h3>
+
+<EditForm Model="CorteCajaForm" OnValidSubmit="AddCorteCaja" FormName="create">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label>Fecha</label>
+        <InputDate @bind-Value="CorteCajaForm.Fecha" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Saldo Inicial</label>
+        <InputNumber @bind-Value="CorteCajaForm.SaldoInicial" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Cerrado Por</label>
+        <InputText @bind-Value="CorteCajaForm.CerradoPor" class="form-control" />
+    </div>
+
+    <button class="btn btn-primary" type="submit">Crear Corte</button>
+    <a href="/cortecajas" class="btn btn-secondary">Cancelar</a>
+    @if (redirectionPending)
+    {
+        NavigationManager.NavigateTo("/");
+    }
+</EditForm>
+
+
+@code {
+    public class CorteCajaInput
+    {
+        public DateTime? Fecha { get; set; } = DateTime.Today;
+        public decimal SaldoInicial { get; set; }
+        public string CerradoPor { get; set; } = string.Empty;
+    }
+
+    private CorteCajaInput CorteCajaForm = new();
+
+    private bool redirectionPending = false;
+
+    private async Task AddCorteCaja()
+    {
+        using var context = DbFactory.CreateDbContext();
+
+        var fechaParam = new Microsoft.Data.SqlClient.SqlParameter("@fecha", CorteCajaForm.Fecha ?? (object)DBNull.Value);
+        var saldoInicialParam = new Microsoft.Data.SqlClient.SqlParameter("@saldo_inicial", CorteCajaForm.SaldoInicial);
+        var cerradoPorParam = new Microsoft.Data.SqlClient.SqlParameter("@cerrado_por", CorteCajaForm.CerradoPor);
+
+        try
+        {
+            await context.Database.ExecuteSqlRawAsync(
+                "EXEC sp_CrearCorteCaja @fecha, @saldo_inicial, @cerrado_por",
+                fechaParam, saldoInicialParam, cerradoPorParam
+            );
+
+            redirectionPending = true;
+ 
+        }
+        catch (Exception ex)
+        {
+            
+            Console.Error.WriteLine("Error al crear corte de caja: " + ex.Message);
+        }
+    }
+}

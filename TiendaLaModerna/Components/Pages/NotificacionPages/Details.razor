@@ -1,0 +1,82 @@
+﻿@page "/notificacions/details"
+@using Microsoft.EntityFrameworkCore
+@using TiendaLaModerna.Components.Models.Notificacion
+@inject IDbContextFactory<TiendaLaModerna.Data.TiendaLaModernaContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Notificacion</h2>
+    <hr />
+    @if (notificacion is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">ProductoId</dt>
+            <dd class="col-sm-10">@notificacion.ProductoId</dd>
+            <dt class="col-sm-2">Email</dt>
+            <dd class="col-sm-10">@notificacion.Email</dd>
+            <dt class="col-sm-2">Tipo</dt>
+            <dd class="col-sm-10">@notificacion.Tipo</dd>
+            <dt class="col-sm-2">Mensaje</dt>
+            <dd class="col-sm-10">@notificacion.Mensaje</dd>
+            <dt class="col-sm-2">Activo</dt>
+            <dd class="col-sm-10">@notificacion.Activo</dd>
+            <dt class="col-sm-2">FechaCreacion</dt>
+            <dd class="col-sm-10">@notificacion.FechaCreacion</dd>
+        </dl>
+        <div>
+           
+            <a href="@($"/notificacions")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private Notificaciones? notificacion;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    private System.Timers.Timer? _timer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadNotificacion();
+
+       
+        _timer = new System.Timers.Timer(10000);
+        _timer.Elapsed += async (_, _) => await RefreshData();
+        _timer.AutoReset = true;
+        _timer.Enabled = true;
+    }
+
+    private async Task LoadNotificacion()
+    {
+        using var context = DbFactory.CreateDbContext();
+        notificacion = await context.Notificaciones.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (notificacion is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+
+       
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task RefreshData()
+    {
+        await LoadNotificacion();
+    }
+
+    public void Dispose()
+    {
+        _timer?.Dispose();
+    }
+}

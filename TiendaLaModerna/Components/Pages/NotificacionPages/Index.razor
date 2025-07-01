@@ -1,0 +1,40 @@
+﻿@page "/notificaciones"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using TiendaLaModerna.Components.Models.Notificacion
+@using TiendaLaModerna.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<TiendaLaModerna.Data.TiendaLaModernaContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="notificacions/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.Notificaciones">
+    <PropertyColumn Property="notificacion => notificacion.ProductoId" />
+    <PropertyColumn Property="notificacion => notificacion.Email" />
+    <PropertyColumn Property="notificacion => notificacion.Tipo" />
+    <PropertyColumn Property="notificacion => notificacion.Mensaje" />
+    <PropertyColumn Property="notificacion => notificacion.Activo" />
+    <PropertyColumn Property="notificacion => notificacion.FechaCreacion" />
+
+    <TemplateColumn Context="notificacion">
+        
+        <a href="@($"notificaciones/details?id={notificacion.Id}")">Details</a> 
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private TiendaLaModernaContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

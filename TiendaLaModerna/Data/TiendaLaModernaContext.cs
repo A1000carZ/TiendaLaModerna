@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TiendaLaModerna.Components.Models.Catalogo;
 using TiendaLaModerna.Components.Models.Inventario;
+using TiendaLaModerna.Components.Models.Notificacion;
 using TiendaLaModerna.Components.Models.Venta;
 
 namespace TiendaLaModerna.Data
@@ -27,13 +28,24 @@ namespace TiendaLaModerna.Data
         public DbSet<TiendaLaModerna.Components.Models.Venta.DetalleVenta> DetalleVenta { get; set; } = default!;
         public DbSet<TiendaLaModerna.Components.Models.Venta.DetalleEntrega> DetalleEntrega { get; set; } = default!;
         public DbSet<TiendaLaModerna.Components.Models.Inventario.MovimientoInventario> MovimientoInventario { get; set; } = default!;
+        public DbSet<TiendaLaModerna.Components.Models.Notificacion.Notificaciones> Notificaciones { get; set; } = default!;
+        public DbSet<TiendaLaModerna.Components.Models.Venta.CorteCaja> CorteCaja { get; set; } = default!;
+        public DbSet<TiendaLaModerna.Components.Models.Venta.ReporteVentas> ReporteVentas { get; set; } = default!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Producto>()
                 .ToTable(tb => tb.HasTrigger("tr_InsertStockProducto"));
 
+            modelBuilder.Entity<ReporteVentas>().HasNoKey();
+
             modelBuilder.Entity<DetalleEntrega>()
-                          .ToTable(tb => tb.HasTrigger("tr_DetalleEntregas"));
+                          .ToTable(tb => tb.HasTrigger("tr_DetalleEntregas"))
+                          .ToTable(tb => tb.HasTrigger("tr_NotificacionStock"));
+
+            modelBuilder.Entity<MovimientoInventario>()
+                .ToTable(tb => tb.HasTrigger("tr_MovimientosInventario"));
+
+
             modelBuilder.Entity<Producto>()
                 .HasOne(p => p.Categoria)
                 .WithMany(c => c.Productos)
@@ -64,9 +76,14 @@ namespace TiendaLaModerna.Data
                 .HasForeignKey(e => e.DetalleVentaId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<MovimientoInventario>()
-                .ToTable(tb => tb.HasTrigger("tr_MovimientosInventario"));
+            modelBuilder.Entity<Notificaciones>()
+                .HasOne(n => n.Producto)
+                .WithMany(p => p.Notificaciones)
+                .HasForeignKey(e => e.ProductoId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
         }
+        
       
     }
 }

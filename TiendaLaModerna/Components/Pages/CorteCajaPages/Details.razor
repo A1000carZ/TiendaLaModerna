@@ -1,0 +1,60 @@
+﻿@page "/cortecajas/details"
+@using Microsoft.EntityFrameworkCore
+@using TiendaLaModerna.Components.Models.Venta
+@inject IDbContextFactory<TiendaLaModerna.Data.TiendaLaModernaContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>CorteCaja</h2>
+    <hr />
+    @if (cortecaja is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Fecha</dt>
+            <dd class="col-sm-10">@cortecaja.Fecha</dd>
+            <dt class="col-sm-2">SaldoInicial</dt>
+            <dd class="col-sm-10">@cortecaja.SaldoInicial</dd>
+            <dt class="col-sm-2">TotalVentas</dt>
+            <dd class="col-sm-10">@cortecaja.TotalVentas</dd>
+            <dt class="col-sm-2">EfectivoRecibido</dt>
+            <dd class="col-sm-10">@cortecaja.EfectivoRecibido</dd>
+            <dt class="col-sm-2">SaldoFinal</dt>
+            <dd class="col-sm-10">@cortecaja.SaldoFinal</dd>
+            <dt class="col-sm-2">Notas</dt>
+            <dd class="col-sm-10">@cortecaja.Notas</dd>
+            <dt class="col-sm-2">CerradoPor</dt>
+            <dd class="col-sm-10">@cortecaja.CerradoPor</dd>
+            <dt class="col-sm-2">FechaCierre</dt>
+            <dd class="col-sm-10">@cortecaja.FechaCierre</dd>
+        </dl>
+        <div>
+           
+            <a href="@($"/cortecajas")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private CorteCaja? cortecaja;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        cortecaja = await context.CorteCaja.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (cortecaja is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

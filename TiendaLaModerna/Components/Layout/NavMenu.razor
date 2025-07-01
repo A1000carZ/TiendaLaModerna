@@ -1,4 +1,7 @@
-﻿<div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+﻿@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<TiendaLaModerna.Data.TiendaLaModernaContext> DbFactory
+
+<div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
         <ul class="space-y-2 font-medium">
             <li>
             <NavLink href="/" class="flex items-center p-2 rounded-lg group" Match="NavLinkMatch.All"
@@ -55,7 +58,7 @@
                     <path d="M3 4a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v3H3V4Zm0 5h18v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9Zm5 3a1 1 0 0 0 0 2h8a1 1 0 1 0 0-2H8Z" />
                 </svg>
                     <span class="flex-1 ms-3 whitespace-nowrap">Inventario</span>
-                    <span class="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">3</span>
+                    
                 </NavLink>
             </li>
             <li>
@@ -87,8 +90,21 @@
                 </svg>
 
                 <span class="flex-1 ms-3 whitespace-nowrap">Notificaciones</span>
+                <span class="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">@totalNotifications</span>
             </NavLink>
         </li>
             
         </ul>
     </div>
+
+
+@code {
+    int totalNotifications = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var context = await DbFactory.CreateDbContextAsync();
+        totalNotifications = await context.Notificaciones.CountAsync();
+
+    }
+}
