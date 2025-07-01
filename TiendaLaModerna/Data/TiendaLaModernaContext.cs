@@ -26,7 +26,6 @@ namespace TiendaLaModerna.Data
         public DbSet<TiendaLaModerna.Components.Models.Venta.Venta> Venta { get; set; } = default!;
         public DbSet<TiendaLaModerna.Components.Models.Venta.DetalleVenta> DetalleVenta { get; set; } = default!;
         public DbSet<TiendaLaModerna.Components.Models.Venta.DetalleEntrega> DetalleEntrega { get; set; } = default!;
-
         public DbSet<TiendaLaModerna.Components.Models.Inventario.MovimientoInventario> MovimientoInventario { get; set; } = default!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -64,6 +63,9 @@ namespace TiendaLaModerna.Data
                 .WithOne(e => e.DetalleVenta)
                 .HasForeignKey(e => e.DetalleVentaId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<MovimientoInventario>()
+                .ToTable(tb => tb.HasTrigger("tr_MovimientosInventario"));
         }
       
     }

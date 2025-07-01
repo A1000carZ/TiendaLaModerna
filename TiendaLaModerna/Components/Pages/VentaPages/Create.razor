@@ -12,15 +12,15 @@
 <div class="min-h-screen bg-gray-50">
     <div class="flex max-w-7xl mx-auto">
 
-        <!-- Main Product Section -->
+       
         <div class="flex-1 p-6">
-            <!-- Header -->
+            
             <div class="mb-8">
                 <h1 class="text-3xl font-bold text-gray-900 mb-2">Punto de Venta</h1>
                 <span class="text-gray-600 text-lg">@DateTime.Now.ToString("dd MMMM yyyy")</span>
             </div>
 
-            <!-- Search Bar -->
+            
             <div class="mb-8">
                 <div class="relative max-w-md">
                     <input type="search" autofocus value="@searchTerm"
@@ -38,7 +38,7 @@
       
             <div class="mb-8">
                 <div class="flex space-x-4 overflow-x-auto pb-2">
-                    <!-- All Categories -->
+                   
                     <div @onclick="() => SelectCategory(null)"
                          class="@(selectedCategory == null ? "bg-blue-600 text-white shadow-lg" : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200")
                                  cursor-pointer rounded-xl p-4 text-center min-w-[120px] transition-all duration-200 shadow-sm">
@@ -48,7 +48,7 @@
                         <span class="text-sm font-medium">Todos</span>
                     </div>
 
-                    <!-- Category Items -->
+                    
                     @foreach (var category in categories)
                     {
                         <div @onclick="() => SelectCategory(category)"

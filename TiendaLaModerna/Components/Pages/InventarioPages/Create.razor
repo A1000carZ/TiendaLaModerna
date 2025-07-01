@@ -1,0 +1,225 @@
+﻿@page "/inventario/create"
+@rendermode InteractiveServer
+@using Microsoft.EntityFrameworkCore
+@using TiendaLaModerna.Components.Models.Catalogo
+@using TiendaLaModerna.Components.Models.Inventario
+@inject IDbContextFactory<TiendaLaModerna.Data.TiendaLaModernaContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>MovimientoInventario</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="MovimientoInventario" OnValidSubmit="AddMovimientoInventario" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert" />
+            <div class="mb-3">
+                <label for="producto" class="form-label">Producto</label>
+                <InputSelect id="producto" class="form-select" @bind-Value="productoId" aria-required="true">
+                    <option value="">Seleccione un producto</option>
+                    @foreach (var producto in productos)
+                    {
+                        <option value="@producto.Id">@producto.Name</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="mb-3">
+                <label for="tipomovimiento" class="form-label">Tipo de Movimiento</label>
+                <InputSelect id="tipomovimiento" @bind-Value="MovimientoInventario.TipoMovimiento" class="form-select" aria-required="true">
+                    <option value="ENTRADA">Entrada</option>
+                    <option value="SALIDA">Salida</option>
+                    <option value="AJUSTE">Ajuste</option>
+                </InputSelect>
+            </div>
+            @if(productoSeleccionado != null && productoSeleccionado.RequiereVencimiento && MovimientoInventario.TipoMovimiento == "ENTRADA")
+            {
+                <div class="mb-3">
+                    <label for="proveedor" class="form-label">Proveedor</label>
+                    <InputSelect id="proveedor" class="form-select" @bind-Value="proveedorSeleccionadoId" aria-required="true">
+                        <option value="">Seleccione un proveedor</option>
+                        @foreach (var proveedor in proveedores)
+                        {
+                            <option value="@proveedor.Id">@proveedor.Nombre @proveedor.Apellido</option>
+                        }
+                    </InputSelect>
+                </div>
+                <div class="mb-3">
+                    <label for="cantidad" class="form-label">Cantidad Recibida:</label>
+                    <InputNumber id="cantidad" @bind-Value="LotesStock.CantidadRecibida" class="form-control" />
+                    <ValidationMessage For="() => LotesStock.CantidadRecibida" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="precio" class="form-label">Precio Unitario:</label>
+                    <InputNumber id="precio" @bind-Value="LotesStock.PrecioCosto" class="form-control" />
+                    <ValidationMessage For="() => LotesStock.PrecioCosto" class="text-danger" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="fechavencimiento" class="form-label">Fecha Vencimiento:</label>
+                    <InputDate id="fechavencimiento" @bind-Value="LotesStock.FechaVencimiento" Type="InputDateType.Date" class="form-control" />
+                    <ValidationMessage For="() => LotesStock.FechaVencimiento" class="text-danger" />
+                </div>
+                <button type="button" class="btn btn-secondary" @onclick="addLoteStock">Agregar Lote</button>
+            }
+            else{
+            @if (productoSeleccionado != null && productoSeleccionado.RequiereVencimiento)
+            {
+                <div class="mb-3">
+                    <label for="lote" class="form-label">Lote</label>
+                    <InputSelect id="lote" class="form-select" @bind-Value="loteSeleccionadoId" aria-required="true">
+                        <option value="">Seleccione un lote</option>
+                        @foreach (var lote in productoSeleccionado.Lotes)
+                        {
+                            <option value="@lote.Id">@lote.NumeroLote - Vencimiento: @lote.FechaVencimiento.ToString("MMMM d, yyyy") - Disponibles @lote.CantidadRestante</option>
+                        }
+                    </InputSelect>
+                </div>
+            }
+
+           
+            <div class="mb-3">
+                <label for="cantidad" class="form-label">Cantidad:</label>
+                <InputNumber  id="cantidad" @bind-Value="MovimientoInventario.Cantidad" class="form-control" />
+                <ValidationMessage For="() => MovimientoInventario.Cantidad" class="text-danger" />
+            </div>
+            
+            <div class="mb-3">
+                <label for="notas" class="form-label">Notas:</label>
+                <InputText id="notas" @bind-Value="MovimientoInventario.Notas" class="form-control" aria-required="true" />
+                <ValidationMessage For="() => MovimientoInventario.Notas" class="text-danger" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create</button>
+            }
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/movimientoinventarios">Back to List</a>
+</div>
+
+@code {
+    List<Producto> productos = [];
+    List<Proveedor> proveedores = [];
+
+    [SupplyParameterFromQuery]
+    private int? productoId {get; set;}
+
+    private int? loteSeleccionadoId;
+    private int? proveedorSeleccionadoId;
+
+    private Producto? productoSeleccionado =>
+        productoId.HasValue ? productos.FirstOrDefault(p => p.Id == productoId.Value) : null;
+
+    [SupplyParameterFromForm]
+    private MovimientoInventario MovimientoInventario { get; set; } = new()
+    {
+        TipoMovimiento = "ENTRADA",
+    };
+
+    [SupplyParameterFromForm]
+    private LotesStock LotesStock { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        productos = await context.Producto.Include(p => p.Lotes.Where(l=>l.Activo || l.CantidadRestante > 0)).ToListAsync();
+        proveedores = await context.Proveedor.ToListAsync();
+        MovimientoInventario.FechaMovimiento = DateTime.Now;
+        LotesStock.FechaVencimiento = DateOnly.FromDateTime(DateTime.Now.AddDays(30));
+        
+    }
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddMovimientoInventario()
+    {
+        using var context = DbFactory.CreateDbContext();
+        MovimientoInventario.FechaMovimiento = DateTime.Now;
+
+        if (productoId.HasValue)
+        {
+            MovimientoInventario.ProductoId = productoId.Value;
+
+            var producto = productos.FirstOrDefault(p => p.Id == productoId.Value);
+            if (producto != null && producto.RequiereVencimiento && loteSeleccionadoId.HasValue)
+            {
+                MovimientoInventario.LoteId = loteSeleccionadoId.Value;
+            }
+        }
+
+        switch (MovimientoInventario.TipoMovimiento)
+        {
+            case "ENTRADA":
+                MovimientoInventario.TipoReferencia = "COMPRA";
+                break;
+            case "SALIDA":
+                MovimientoInventario.TipoReferencia ="VENTA";
+                break;
+            case "AJUSTE":
+                MovimientoInventario.TipoReferencia = "AJUSTE";
+                break;
+            default:
+                throw new InvalidOperationException("Tipo de movimiento no válido.");
+        }
+
+        context.MovimientoInventario.Add(MovimientoInventario);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/inventario");
+    }
+
+    private async Task addLoteStock()
+    {
+        using var context = DbFactory.CreateDbContext();
+        if (proveedorSeleccionadoId != null)
+        {
+            LotesStock.ProveedorId = proveedorSeleccionadoId.Value;
+        }
+        if (productoSeleccionado != null)
+        {
+            LotesStock.ProductoId = productoSeleccionado.Id;
+        }
+
+    if (LotesStock.FechaVencimiento < DateOnly.FromDateTime(DateTime.Now))
+        {
+            throw new InvalidOperationException("La fecha de vencimiento no puede ser anterior a la fecha actual.");
+        }
+        if (LotesStock.CantidadRecibida <= 0)
+        {
+            throw new InvalidOperationException("La cantidad recibida debe ser mayor que cero.");
+        }
+        LotesStock.CantidadRestante = LotesStock.CantidadRecibida;
+        LotesStock.NumeroLote = $"{productoId}-{DateTime.Now:yyyyMMddHHmmss}";
+        LotesStock.FechaRecepcion = DateTime.Now;
+        LotesStock.Activo = true;
+        context.LotesStock.Add(LotesStock);
+        await context.SaveChangesAsync();
+        int generatedLoteId = LotesStock.Id;
+
+        // Create another object using the generated ID
+        var movimientoInventario = new MovimientoInventario
+        {
+            ProductoId = productoSeleccionado.Id,
+            LoteId = generatedLoteId, // Use the generated ID
+            TipoMovimiento = "ENTRADA",
+            TipoReferencia = "COMPRA",
+            Cantidad = LotesStock.CantidadRecibida,
+            FechaMovimiento = DateTime.Now,
+            Notas = $"Entrada automática del lote {LotesStock.NumeroLote}"
+        };
+
+        // Add the movement to context
+        context.MovimientoInventario.Add(movimientoInventario);
+
+        // Save the movement
+        await context.SaveChangesAsync();
+
+        
+        NavigationManager.NavigateTo("/inventario");
+    }
+}
+
